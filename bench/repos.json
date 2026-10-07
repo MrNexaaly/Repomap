@@ -1,0 +1,8 @@
+{
+  "comment": "Fitness split: the cases an optimizer may see and tune on. A held-out split of different repositories is kept outside this repository on purpose and is used only to verify.",
+  "repos": [
+    {"name": "nexus", "path": "/home/zero/systemhelper/nexus", "max_cases": 110},
+    {"name": "nxlang", "path": "/home/zero/Dev/nxlang", "max_cases": 110},
+    {"name": "nexamail", "path": "/home/zero/Dev/Nexaaly/Nexamail", "max_cases": 60}
+  ]
+}

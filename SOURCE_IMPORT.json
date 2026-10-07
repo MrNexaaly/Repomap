@@ -1,0 +1,14 @@
+{
+  "source_directory": "/home/zero/Dev/Nexaaly/repomap",
+  "source_base_commit": "1e7e6b59a95fd9e97c6b7085b61b475d70ac1f71",
+  "source_files": 52,
+  "import_date": "2026-10-07",
+  "snapshot_only": true,
+  "build_or_release_validation": "not performed for this source upload",
+  "excluded_categories": [
+    "credentials and per-user settings",
+    "personal memory/session stores",
+    "dependencies, caches and generated build/benchmark output"
+  ],
+  "backup_branch": null
+}

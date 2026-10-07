@@ -1,0 +1,16 @@
+[package]
+name = "repomap"
+version = "0.1.0"
+edition = "2021"
+description = "Query-aware repository map: ranks and packs source files and symbols under a token budget"
+
+[dependencies]
+ignore = "0.4.33"
+serde_json = "1.0.151"
+
+[dev-dependencies]
+tempfile = "3"
+
+[profile.release]
+lto = true
+codegen-units = 1

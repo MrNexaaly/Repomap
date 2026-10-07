@@ -1,0 +1,794 @@
+{
+ "labels": [
+  {
+   "id": "nexus-c6e9884ef0",
+   "label": "fair",
+   "reason": "Ink slash-command dispatch and its smoke tests directly implement /route support."
+  },
+  {
+   "id": "nexus-3330f05f16",
+   "label": "fair",
+   "reason": "The runtime controls file-task routing and detects implementation turns that perform no work."
+  },
+  {
+   "id": "nexus-77424b5856",
+   "label": "fair",
+   "reason": "Consequence parsing, prediction, signatures, and their regression tests are the described changes."
+  },
+  {
+   "id": "nexus-0130c865ff",
+   "label": "fair",
+   "reason": "The agent runtime sets nested candidate paths and creates overlay directories."
+  },
+  {
+   "id": "nexus-3e41dcd5c4",
+   "label": "fair",
+   "reason": "The runtime's verifier parser directly controls affirmative output and malformed-result retries."
+  },
+  {
+   "id": "nexus-8c71aea985",
+   "label": "fair",
+   "reason": "The runtime implements both specialist routing guards and catastrophic-command approval."
+  },
+  {
+   "id": "nexus-45b86d1027",
+   "label": "fair",
+   "reason": "Skill capture rules and their smoke tests directly enforce reusable workflow selection."
+  },
+  {
+   "id": "nexus-b53a324c8c",
+   "label": "fair",
+   "reason": "Both named engines implement the requested ranking, search, and ideation changes."
+  },
+  {
+   "id": "nexus-86a9a4cdd5",
+   "label": "fair",
+   "reason": "LSP clients and tool dispatch implement listing and applying code actions."
+  },
+  {
+   "id": "nexus-a4110dfb6a",
+   "label": "fair",
+   "reason": "The edit implementation and regression tests address newline preservation and replacement indentation."
+  },
+  {
+   "id": "nexus-8a51d55644",
+   "label": "fair",
+   "reason": "The intent router and discovery tests directly fix this wording's misclassification."
+  },
+  {
+   "id": "nexus-2f6d36857a",
+   "label": "fair",
+   "reason": "The runtime and frozen-suite implementation perform landing verification, with corresponding smoke coverage."
+  },
+  {
+   "id": "nexus-87b934707c",
+   "label": "fair",
+   "reason": "The query explicitly requests changes to prompt-contract verification tests."
+  },
+  {
+   "id": "nexus-c61ee535b1",
+   "label": "fair",
+   "reason": "The action protocol parses and translates native model tool calls."
+  },
+  {
+   "id": "nexus-28b0867865",
+   "label": "fair",
+   "reason": "The invention pipeline and smoke tests implement policy-driven stage recovery."
+  },
+  {
+   "id": "nexus-28e686b109",
+   "label": "fair",
+   "reason": "Core goal wiring and TUI continuation handling directly implement persistent autonomous goals."
+  },
+  {
+   "id": "nexus-a93af85ebe",
+   "label": "fair",
+   "reason": "App task tracking and tests determine which workspace mutations invalidate prior checks."
+  },
+  {
+   "id": "nexus-b1867d65d5",
+   "label": "fair",
+   "reason": "The existing memory module contains the ranker being extracted."
+  },
+  {
+   "id": "nexus-5491973ae7",
+   "label": "fair",
+   "reason": "The routing evaluator and smoke fixtures directly contain the expanded corpus."
+  },
+  {
+   "id": "nexus-64f81a67c7",
+   "label": "fair",
+   "reason": "Action parsing and its rejection tests directly cover malformed JSON envelopes."
+  },
+  {
+   "id": "nexus-5c9abe1fe0",
+   "label": "fair",
+   "reason": "The recall evaluator parses the requested positional split argument."
+  },
+  {
+   "id": "nexus-09879083c0",
+   "label": "fair",
+   "reason": "The markdown renderer controls assistant block spacing and fenced-code presentation."
+  },
+  {
+   "id": "nexus-1e019dfa4d",
+   "label": "fair",
+   "reason": "The intent router and reasoning smoke tests handle standalone coding challenges."
+  },
+  {
+   "id": "nexus-19e19a226e",
+   "label": "fair",
+   "reason": "The model client owns endpoint selection and fetch URL constants."
+  },
+  {
+   "id": "nexus-05d6ef8b0b",
+   "label": "fair",
+   "reason": "Core session summarization implements the described strategy reflections."
+  },
+  {
+   "id": "nexus-5dbbf4d34b",
+   "label": "mismatch",
+   "reason": "The production-readiness checkpoint gives no clue about queue processing."
+  },
+  {
+   "id": "nexus-feca93b60f",
+   "label": "fair",
+   "reason": "The evolution runtime parses evaluator output into fitness scores."
+  },
+  {
+   "id": "nexus-c7daea8f39",
+   "label": "fair",
+   "reason": "CLI argument parsing and terminal rendering implement the requested modes and model flag."
+  },
+  {
+   "id": "nexus-43dd851cf3",
+   "label": "fair",
+   "reason": "The query explicitly includes TypeScript MCP output bounding, implemented in the gold file."
+  },
+  {
+   "id": "nexus-5c4f30cf71",
+   "label": "fair",
+   "reason": "The model client fetches provider models; the TUI populates the picker."
+  },
+  {
+   "id": "nexus-2d8a54c598",
+   "label": "fair",
+   "reason": "CLI argument handling and terminal script parsing implement effort selection and semicolon splitting."
+  },
+  {
+   "id": "nexus-fc3e012bc2",
+   "label": "fair",
+   "reason": "Both TUI renderers directly handle consequence prediction events."
+  },
+  {
+   "id": "nexus-a9b2bd2a3b",
+   "label": "fair",
+   "reason": "The Ink TUI contains the performance probe and its logging overhead."
+  },
+  {
+   "id": "nexus-8536c31c8f",
+   "label": "fair",
+   "reason": "The named Rust body subsystem implements typed telemetry and attention arbitration."
+  },
+  {
+   "id": "nexus-e894e988f5",
+   "label": "fair",
+   "reason": "Footer formatting, jobs-panel rendering, and smoke tests directly implement the requested UI."
+  },
+  {
+   "id": "nexus-0229c4970f",
+   "label": "fair",
+   "reason": "Routing guards and regression tests prevent pipeline vocabulary from capturing coding tasks."
+  },
+  {
+   "id": "nexus-ca26eb3cd6",
+   "label": "fair",
+   "reason": "The query specifically requests updating loop-memory tests for technique scope."
+  },
+  {
+   "id": "nexus-5e41615e90",
+   "label": "fair",
+   "reason": "The intent router and agent-routing tests implement capability-aware implementation routing."
+  },
+  {
+   "id": "nexus-dd157950b4",
+   "label": "fair",
+   "reason": "The query names the three smoke suites whose drift is corrected."
+  },
+  {
+   "id": "nexus-52af231575",
+   "label": "mismatch",
+   "reason": "The checkpoint identifies neither the failing test nor the memory-ranking task."
+  },
+  {
+   "id": "nexus-a7add1af25",
+   "label": "fair",
+   "reason": "App verification logic and related state handling implement the described verdict fixes."
+  },
+  {
+   "id": "nexus-11b23b910a",
+   "label": "fair",
+   "reason": "Dreaming correction extraction directly distinguishes task specifications from standing feedback."
+  },
+  {
+   "id": "nexus-de059b896f",
+   "label": "fair",
+   "reason": "The intent router decides whether named-file prompts require tools."
+  },
+  {
+   "id": "nexus-c5e845c3ee",
+   "label": "fair",
+   "reason": "The invention pipeline and smoke tests implement evaluator discrimination and regeneration."
+  },
+  {
+   "id": "nexus-bb8d29140c",
+   "label": "fair",
+   "reason": "The routing evaluator reads user corrections and extends its oracle."
+  },
+  {
+   "id": "nexus-10d79521c0",
+   "label": "fair",
+   "reason": "Dreaming extracts reusable strategies from verified code-edit events."
+  },
+  {
+   "id": "nexus-ce31226e00",
+   "label": "fair",
+   "reason": "Body telemetry wiring, attention computation, and property tests directly implement real-telemetry triage."
+  },
+  {
+   "id": "nexus-5bfcaed80a",
+   "label": "fair",
+   "reason": "Evolution and invention implementations and smoke tests contain the described engine upgrades."
+  },
+  {
+   "id": "nexus-916002c514",
+   "label": "fair",
+   "reason": "The CLI entry point controls MCP connection timing for each execution mode."
+  },
+  {
+   "id": "nexus-cae7f6f05a",
+   "label": "fair",
+   "reason": "The todo tool implementation compares content before rewriting its file."
+  },
+  {
+   "id": "nexus-1602704df0",
+   "label": "fair",
+   "reason": "The intent router contains the discovery-ideation classification rule."
+  },
+  {
+   "id": "nexus-2b030f1cb1",
+   "label": "fair",
+   "reason": "The memory scoring module contains the recall weights and semantic aliases."
+  },
+  {
+   "id": "nexus-2d07af6546",
+   "label": "fair",
+   "reason": "The memory module bounds recall queries before scoring entries."
+  },
+  {
+   "id": "nexus-646bcf83a7",
+   "label": "mismatch",
+   "reason": "Guidance logic lives in new next-move.ts; gold only adds event and output plumbing."
+  },
+  {
+   "id": "nexus-5f7a0c8ea4",
+   "label": "fair",
+   "reason": "The query specifically names the queued-attachments mock's missing configuration."
+  },
+  {
+   "id": "nexus-b4a2bf8917",
+   "label": "fair",
+   "reason": "Footer formatting and its smoke tests enforce width-sensitive degradation."
+  },
+  {
+   "id": "nexus-ac01ed37df",
+   "label": "fair",
+   "reason": "Memory serialization and loading implement escaping fixes and size limits."
+  },
+  {
+   "id": "nexus-5f11e3ef38",
+   "label": "fair",
+   "reason": "Task-state fingerprinting and related tests directly switch to content-based Git identifiers."
+  },
+  {
+   "id": "nexus-f7beacbc53",
+   "label": "fair",
+   "reason": "The terminal renderer directly formats the --once memory recall line."
+  },
+  {
+   "id": "nexus-14e2bbbd8a",
+   "label": "fair",
+   "reason": "The model client classifies transient connection failures and controls retries."
+  },
+  {
+   "id": "nexus-7117c7d7c2",
+   "label": "mismatch",
+   "reason": "The checkpoint never identifies the failing delegation or team tests."
+  },
+  {
+   "id": "nexus-950353071d",
+   "label": "fair",
+   "reason": "The builtin verify agent declares the reasoning effort used by the gate."
+  },
+  {
+   "id": "nexus-265f9e6013",
+   "label": "fair",
+   "reason": "App, tools, and TUI changes directly address model starvation, self-spawning, and transcript floods."
+  },
+  {
+   "id": "nexus-a2ac06f5fa",
+   "label": "fair",
+   "reason": "The query names the smoke suites and intended contract corrections."
+  },
+  {
+   "id": "nexus-6427eecc26",
+   "label": "fair",
+   "reason": "The Rust turn subsystem implements verification, recovery, and autonomy primitives."
+  },
+  {
+   "id": "nexus-172ff2afb1",
+   "label": "fair",
+   "reason": "App entry points, frontend state, and render tests implement the interactive Rust TUI."
+  },
+  {
+   "id": "nexus-966f41bba3",
+   "label": "fair",
+   "reason": "The routing corpus file contains the deterministic oracle generator."
+  },
+  {
+   "id": "nexus-b9fa4df24e",
+   "label": "fair",
+   "reason": "The tool registry contains file-write paths that must adopt atomic persistence."
+  },
+  {
+   "id": "nexus-e75fa6dc44",
+   "label": "fair",
+   "reason": "The Rust model client implements the OAuth backend's required headers and request body."
+  },
+  {
+   "id": "nexus-ff00f11ae1",
+   "label": "fair",
+   "reason": "The entry point maps preferred Nexus environment names into model configuration."
+  },
+  {
+   "id": "nexus-aa77f63e8e",
+   "label": "fair",
+   "reason": "The react-logic evaluator contains the mock tool chains being repaired."
+  },
+  {
+   "id": "nexus-74c5600ea5",
+   "label": "fair",
+   "reason": "The scoring module contains the changed recall weights and synonym groups."
+  },
+  {
+   "id": "nexus-73f92e7ea3",
+   "label": "fair",
+   "reason": "The memory module filters trivial greetings and low-relevance recall results."
+  },
+  {
+   "id": "nexus-07b2f9dc4a",
+   "label": "fair",
+   "reason": "Code intelligence and tool implementations directly provide the requested math, LSP, and toolchain capabilities."
+  },
+  {
+   "id": "nexus-d59a213faa",
+   "label": "mismatch",
+   "reason": "The generic coverage title identifies no suites; most additions are new smoke files."
+  },
+  {
+   "id": "nexus-1d94e92364",
+   "label": "fair",
+   "reason": "The monitor tool's allowlist and rejection messages live in the registry."
+  },
+  {
+   "id": "nexus-a748e1b9c6",
+   "label": "fair",
+   "reason": "The query explicitly targets contract drift in the react-loop smoke test."
+  },
+  {
+   "id": "nexus-086dbf1931",
+   "label": "mismatch",
+   "reason": "The classifier is new engine-classifier.ts; gold merely adds model-client output-token options."
+  },
+  {
+   "id": "nexus-f8fc07d12b",
+   "label": "fair",
+   "reason": "The Rust client, parity binary, and smoke probe implement and validate HTTP transport."
+  },
+  {
+   "id": "nexus-5928b80062",
+   "label": "fair",
+   "reason": "Benchmark runner and task definitions implement repeated runs, grading, and trend reporting."
+  },
+  {
+   "id": "nexus-b8e7858b85",
+   "label": "fair",
+   "reason": "Next-move logic and its smoke tests directly implement repeated-tool-failure guidance."
+  },
+  {
+   "id": "nexus-4de534555d",
+   "label": "fair",
+   "reason": "Router memory and corpus consumers implement and test bootstrap example recall."
+  },
+  {
+   "id": "nexus-4f34d6e39d",
+   "label": "fair",
+   "reason": "Evolution engines, benchmark harness, and memory integration implement the described discovery workflow."
+  },
+  {
+   "id": "nexus-2a9c9a6267",
+   "label": "fair",
+   "reason": "App and tool execution paths directly implement conversational gating and self-spawn protection."
+  },
+  {
+   "id": "nexus-2cb34bf515",
+   "label": "mismatch",
+   "reason": "The runnable agent is new nexus-app code; gold changes client options and fixtures."
+  },
+  {
+   "id": "nexus-10c705000c",
+   "label": "fair",
+   "reason": "App runtime and entry-point changes integrate session persistence, memory recall, and trace recording."
+  },
+  {
+   "id": "nexus-38824ecf5e",
+   "label": "fair",
+   "reason": "Task tracking and judgment code construct review diffs from the starting commit."
+  },
+  {
+   "id": "nexus-26e2e74e4b",
+   "label": "fair",
+   "reason": "The model client implements stream liveness timers and failed-turn handling."
+  },
+  {
+   "id": "nexus-dc1ec674b0",
+   "label": "fair",
+   "reason": "The named task-difficulty classifier contains the evolved classification rules."
+  },
+  {
+   "id": "nxlang-ec2478fb5c",
+   "label": "fair",
+   "reason": "Semantic lowering and typed-HIR tests directly implement integer count loops."
+  },
+  {
+   "id": "nxlang-f06ec69c3a",
+   "label": "mismatch",
+   "reason": "Bounds-check elimination lives in main.nx; gold only adds regression harness coverage."
+  },
+  {
+   "id": "nxlang-d7c5c75e43",
+   "label": "fair",
+   "reason": "The x64 backend and tests implement aggregate argument and return emission."
+  },
+  {
+   "id": "nxlang-2e6497bc16",
+   "label": "fair",
+   "reason": "Driver and test-harness changes expose and validate the stage0 C smoke path."
+  },
+  {
+   "id": "nxlang-8ebf8e0ed3",
+   "label": "fair",
+   "reason": "The smoke backend and test runner implement the bad-epoll lifetime stress gate."
+  },
+  {
+   "id": "nxlang-d2414ad765",
+   "label": "mismatch",
+   "reason": "Gold only changes entry-point offsets; struct-return and string-equality implementations are elsewhere."
+  },
+  {
+   "id": "nxlang-60a3217dd6",
+   "label": "fair",
+   "reason": "The checker implements the explicitly requested cross-package variadic-any argument acceptance."
+  },
+  {
+   "id": "nxlang-28c08a094f",
+   "label": "fair",
+   "reason": "The compiler driver implements .tnx discovery, test execution, and result reporting."
+  },
+  {
+   "id": "nxlang-330a54fd3a",
+   "label": "fair",
+   "reason": "Driver ABI reporting and package summaries directly emit hardened layout facts."
+  },
+  {
+   "id": "nxlang-195e1ac69e",
+   "label": "fair",
+   "reason": "The CLI driver directly handles no-argument help output."
+  },
+  {
+   "id": "nxlang-1c4d9f939e",
+   "label": "fair",
+   "reason": "The checker and C backend implement error construction and its runtime representation."
+  },
+  {
+   "id": "nxlang-89dd269861",
+   "label": "fair",
+   "reason": "The driver and test runner implement deterministic stage0 timing reports."
+  },
+  {
+   "id": "nxlang-e70503baf9",
+   "label": "fair",
+   "reason": "The x64 backend and regression tests implement reuse of dominating array checks."
+  },
+  {
+   "id": "nxlang-f418e3254b",
+   "label": "fair",
+   "reason": "The x64 backend and tests implement floating-point loop state retention."
+  },
+  {
+   "id": "nxlang-0f451b27d8",
+   "label": "mismatch",
+   "reason": "Scalar, random, and native implementations are outside gold; gold contains only supporting tests."
+  },
+  {
+   "id": "nxlang-5870e580be",
+   "label": "fair",
+   "reason": "Parser, checker, formatter, and C backend implement the required multi-assignment syntax and semantics."
+  },
+  {
+   "id": "nxlang-b5d96b6261",
+   "label": "fair",
+   "reason": "The HIR verifier and tests directly enforce non-owning string operation rules."
+  },
+  {
+   "id": "nxlang-22519aa5c4",
+   "label": "fair",
+   "reason": "The test runner's category list controls default native differential execution."
+  },
+  {
+   "id": "nxlang-0fc4d2329c",
+   "label": "fair",
+   "reason": "The test runner implements recursive discovery and execution of system smoke programs."
+  },
+  {
+   "id": "nxlang-80945e7e58",
+   "label": "fair",
+   "reason": "Semantic lowering and typed-HIR tests directly implement empty slices."
+  },
+  {
+   "id": "nxlang-16457400da",
+   "label": "fair",
+   "reason": "The HIR verifier and tests implement aggregate ABI verification memoization."
+  },
+  {
+   "id": "nxlang-77939b15ec",
+   "label": "fair",
+   "reason": "The query explicitly requests backend aggregate-constant test coverage."
+  },
+  {
+   "id": "nxlang-90e6bc7e0c",
+   "label": "fair",
+   "reason": "The query explicitly includes trap-page harness repair, directly implemented in gold."
+  },
+  {
+   "id": "nxlang-8e6a58dcac",
+   "label": "mismatch",
+   "reason": "Map iteration is implemented in main.nx; gold contains only five regression cases."
+  },
+  {
+   "id": "nxlang-3accb381f6",
+   "label": "fair",
+   "reason": "The native runner and safety harness integrate streamlined generated-call stack guards."
+  },
+  {
+   "id": "nxlang-9bfaf7d3f6",
+   "label": "fair",
+   "reason": "The native runner detects CPUs and allocates parallel-worker structures dynamically."
+  },
+  {
+   "id": "nxlang-d3cc50f077",
+   "label": "fair",
+   "reason": "The native runner implements fork workers and shared-memory function emission."
+  },
+  {
+   "id": "nxlang-ee66037144",
+   "label": "fair",
+   "reason": "The semantic checker enforces implicit-error availability in expression contexts."
+  },
+  {
+   "id": "nxlang-06f6dd52ea",
+   "label": "fair",
+   "reason": "The driver resolves imports using local subfolders and quoted relative paths."
+  },
+  {
+   "id": "nxlang-c364c82d1f",
+   "label": "fair",
+   "reason": "The query explicitly includes the escaped-quote lexer fix implemented in gold."
+  },
+  {
+   "id": "nxlang-fecbd29845",
+   "label": "fair",
+   "reason": "The x64 backend and tests implement fixed-array carrier execution."
+  },
+  {
+   "id": "nxlang-daa21e534a",
+   "label": "fair",
+   "reason": "The scaling benchmark implements the requested fixed-array compilation gate."
+  },
+  {
+   "id": "nxlang-547255e792",
+   "label": "mismatch",
+   "reason": "Native map codegen lives in main.nx; gold only adds regression cases."
+  },
+  {
+   "id": "nxlang-6734b64638",
+   "label": "mismatch",
+   "reason": "The checkpoint provides no identifiable task beyond unspecified phase and fixture references."
+  },
+  {
+   "id": "nxlang-97481c55aa",
+   "label": "fair",
+   "reason": "The package-summary implementation computes and emits primitive struct layouts."
+  },
+  {
+   "id": "nxlang-80008ece46",
+   "label": "fair",
+   "reason": "The typed-HIR verifier directly validates builtin slice element widths."
+  },
+  {
+   "id": "nxlang-75033d77e2",
+   "label": "mismatch",
+   "reason": "The continuation query supplies no TODO details or identifiable implementation task."
+  },
+  {
+   "id": "nxlang-3c370e3a92",
+   "label": "fair",
+   "reason": "The C smoke backend implements integer branching and scoped locals."
+  },
+  {
+   "id": "nxlang-41e2f39f50",
+   "label": "fair",
+   "reason": "The HIR verifier and tests implement typed aggregate constant validation."
+  },
+  {
+   "id": "nxlang-6a14d60cc8",
+   "label": "fair",
+   "reason": "Selfhost repair plausibly requires inspecting native runner trap and global-memory mappings."
+  },
+  {
+   "id": "nxlang-b9039e2450",
+   "label": "fair",
+   "reason": "The HIR verifier and tests implement nested integer aggregate ABI validation."
+  },
+  {
+   "id": "nxlang-605d797738",
+   "label": "fair",
+   "reason": "The embed script directly emits signed machine-word literals while preserving bytes."
+  },
+  {
+   "id": "nxlang-59e0bc09a9",
+   "label": "fair",
+   "reason": "HIR definitions, verification, and tests implement the tuple and error ABI."
+  },
+  {
+   "id": "nxlang-d5ca9a1b66",
+   "label": "fair",
+   "reason": "The package-summary implementation computes composite layouts and handles unsupported cases."
+  },
+  {
+   "id": "nxlang-e7efe9236c",
+   "label": "fair",
+   "reason": "The C smoke backend directly emits integer return expressions."
+  },
+  {
+   "id": "nxlang-f906699807",
+   "label": "fair",
+   "reason": "The VS Code extension performs package-aware diagnostic checks."
+  },
+  {
+   "id": "nxlang-b09033cf33",
+   "label": "fair",
+   "reason": "The scaling benchmark implements the requested struct-copy compilation gate."
+  },
+  {
+   "id": "nxlang-e2ded76032",
+   "label": "mismatch",
+   "reason": "Vector and native implementations are outside gold; gold only extends math smoke coverage."
+  },
+  {
+   "id": "nxlang-d804904903",
+   "label": "fair",
+   "reason": "ELF emission, headers, and tests implement read-only data isolation."
+  },
+  {
+   "id": "nxlang-3cb307c59f",
+   "label": "fair",
+   "reason": "The query specifically requests aggregate coverage in HIR lowering tests."
+  },
+  {
+   "id": "nexamail-ebf1b64bff",
+   "label": "fair",
+   "reason": "The named systemd checker and backup helper modes directly implement the requested fixes."
+  },
+  {
+   "id": "nexamail-ba7df12b6c",
+   "label": "fair",
+   "reason": "Webmail list rendering, formatting, state, and styling implement search highlights and folder labels."
+  },
+  {
+   "id": "nexamail-08fd7b65e8",
+   "label": "fair",
+   "reason": "The named UI components implement row selection, text links, and shortcut help."
+  },
+  {
+   "id": "nexamail-ce1fc3a893",
+   "label": "mismatch",
+   "reason": "Gold only fixes a test assertion; the claimed JMAP write implementation is absent."
+  },
+  {
+   "id": "nexamail-bc028f8035",
+   "label": "fair",
+   "reason": "The auth-cache fixture script provisions postmaster and retains failure diagnostics."
+  },
+  {
+   "id": "nexamail-637478e889",
+   "label": "fair",
+   "reason": "Reader initialization and mailbox labeling directly implement the described webmail fixes."
+  },
+  {
+   "id": "nexamail-f296c0f5ad",
+   "label": "fair",
+   "reason": "The explicitly named development script selects a random submission port."
+  },
+  {
+   "id": "nexamail-d4fdf8f149",
+   "label": "fair",
+   "reason": "The reader component fixes the CSS class collision clipping plain-text mail."
+  },
+  {
+   "id": "nexamail-1bf130aa86",
+   "label": "mismatch",
+   "reason": "Documentation changes dominate; gold only adds an incidental LMTP catalogue entry."
+  },
+  {
+   "id": "nexamail-e4859949bd",
+   "label": "fair",
+   "reason": "The development fixture and mail seeder implement threading and optional large attachments."
+  },
+  {
+   "id": "nexamail-099f39b485",
+   "label": "fair",
+   "reason": "The authentication cache performs expiry checks inside its locked decision."
+  },
+  {
+   "id": "nexamail-43bc8b65df",
+   "label": "fair",
+   "reason": "The composer component directly fixes the To label's accessible name."
+  },
+  {
+   "id": "nexamail-7253a50cde",
+   "label": "fair",
+   "reason": "The named auth-cache benchmark contains the syntax error being fixed."
+  },
+  {
+   "id": "nexamail-4f9a16c1e4",
+   "label": "fair",
+   "reason": "Message-list rendering and snippet formatting keep highlights visible on narrow rows."
+  },
+  {
+   "id": "nexamail-f7a50899aa",
+   "label": "fair",
+   "reason": "SMTP DATA handling and protocol tests directly implement undeclared 8-bit body acceptance."
+  },
+  {
+   "id": "nexamail-783f851e8a",
+   "label": "fair",
+   "reason": "Auth, cache, diagnostics, and benchmark code implement shared-verification reporting and test serialization."
+  },
+  {
+   "id": "nexamail-129be8dabb",
+   "label": "mismatch",
+   "reason": "Composition lives in new compose.rs; gold only declares and reexports the module."
+  },
+  {
+   "id": "nexamail-06ca0b412c",
+   "label": "fair",
+   "reason": "The password cache implements sharing concurrent identical Argon2 verifications."
+  },
+  {
+   "id": "nexamail-be3cc9eb65",
+   "label": "fair",
+   "reason": "The events server and webmail client implement stream limits and reconnection."
+  }
+ ]
+}

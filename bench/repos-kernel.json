@@ -1,0 +1,6 @@
+{
+  "comment": "Large-repository fitness split: Linux 7.2 as one fixed snapshot, tasks from commits after v7.2 (human-written). Metadata clone: git clone --bare --filter=blob:none --shallow-exclude=v7.2 https://github.com/torvalds/linux.git ~/.cache/repomap-bench/repos/linux-meta.git",
+  "repos": [
+    {"name": "linux", "path": "~/.cache/repomap-bench/repos/linux-meta.git", "snapshot": "/usr/src/linux-7.2", "max_cases": 200}
+  ]
+}
