@@ -32,11 +32,29 @@ const PACKAGE_MANIFESTS: &[&str] = &[
     "build.gradle.kts",
     "build.gradle",
 ];
-const README_NAMES: &[&str] = &["README.md", "README", "readme.md", "Readme.md", "README.rst", "README.txt"];
+const README_NAMES: &[&str] = &[
+    "README.md",
+    "README",
+    "readme.md",
+    "Readme.md",
+    "README.rst",
+    "README.txt",
+];
 /// Files whose leading doc comment usually states a module's purpose.
 const MODULE_ROOTS: &[&str] = &[
-    "lib.rs", "main.rs", "mod.rs", "index.ts", "index.tsx", "index.js", "__init__.py", "main.go",
-    "main.py", "app.py", "main.ts", "main.swift", "Main.kt",
+    "lib.rs",
+    "main.rs",
+    "mod.rs",
+    "index.ts",
+    "index.tsx",
+    "index.js",
+    "__init__.py",
+    "main.go",
+    "main.py",
+    "app.py",
+    "main.ts",
+    "main.swift",
+    "Main.kt",
 ];
 const LAYOUT_ROWS: usize = 14;
 
@@ -45,7 +63,13 @@ fn estimate_tokens(text: &str) -> usize {
 }
 
 fn language(path: &str) -> &'static str {
-    match path.rsplit('.').next().unwrap_or("").to_ascii_lowercase().as_str() {
+    match path
+        .rsplit('.')
+        .next()
+        .unwrap_or("")
+        .to_ascii_lowercase()
+        .as_str()
+    {
         "rs" => "Rust",
         "ts" | "tsx" => "TypeScript",
         "js" | "jsx" | "mjs" | "cjs" => "JavaScript",
@@ -81,9 +105,17 @@ fn thousands(value: usize) -> String {
 fn test_like(path: &str) -> bool {
     let lowered = format!("/{}", path.to_ascii_lowercase());
     let name = lowered.rsplit('/').next().unwrap_or("");
-    ["/tests/", "/test/", "/__tests__/", "/fixtures/", "/testdata/", "/benches/", "/examples/"]
-        .iter()
-        .any(|part| lowered.contains(part))
+    [
+        "/tests/",
+        "/test/",
+        "/__tests__/",
+        "/fixtures/",
+        "/testdata/",
+        "/benches/",
+        "/examples/",
+    ]
+    .iter()
+    .any(|part| lowered.contains(part))
         || name.starts_with("test_")
         || name.contains(".test.")
         || name.contains(".spec.")
@@ -130,9 +162,7 @@ fn first_sentence(text: &str, limit: usize) -> String {
     let cut = collapsed
         .char_indices()
         .find(|(index, character)| {
-            *character == '.'
-                && collapsed[index + 1..].starts_with(' ')
-                && *index > 12
+            *character == '.' && collapsed[index + 1..].starts_with(' ') && *index > 12
         })
         .map_or(collapsed.as_str(), |(index, _)| &collapsed[..=index]);
     if cut.chars().count() <= limit {
@@ -204,7 +234,11 @@ fn manifest_description(directory: &Path) -> Option<String> {
         if let Ok(text) = fs::read_to_string(directory.join(name)) {
             for line in text.lines() {
                 if let Some(value) = line.trim().strip_prefix("description") {
-                    let value = value.trim_start().trim_start_matches('=').trim().trim_matches('"');
+                    let value = value
+                        .trim_start()
+                        .trim_start_matches('=')
+                        .trim()
+                        .trim_matches('"');
                     if !value.is_empty() {
                         return Some(first_sentence(value, 110));
                     }
@@ -219,15 +253,27 @@ fn manifest_description(directory: &Path) -> Option<String> {
 /// docstring (Python), `// Package` (Go) or a leading comment block (C-like).
 fn module_doc(path: &Path) -> Option<String> {
     let text = fs::read_to_string(path).ok()?;
-    let mut lines = text.lines().map(str::trim).filter(|line| !line.starts_with("#!")).peekable();
+    let mut lines = text
+        .lines()
+        .map(str::trim)
+        .filter(|line| !line.starts_with("#!"))
+        .peekable();
     let mut doc = Vec::new();
-    let extension = path.extension().and_then(|value| value.to_str()).unwrap_or("");
+    let extension = path
+        .extension()
+        .and_then(|value| value.to_str())
+        .unwrap_or("");
     if extension == "py" {
-        while lines.peek().is_some_and(|line| line.is_empty() || line.starts_with('#')) {
+        while lines
+            .peek()
+            .is_some_and(|line| line.is_empty() || line.starts_with('#'))
+        {
             lines.next();
         }
         let first = lines.next()?;
-        let quote = ["\"\"\"", "'''"].into_iter().find(|quote| first.starts_with(quote))?;
+        let quote = ["\"\"\"", "'''"]
+            .into_iter()
+            .find(|quote| first.starts_with(quote))?;
         let rest = &first[3..];
         if let Some(end) = rest.find(quote) {
             doc.push(rest[..end].to_owned());
@@ -311,7 +357,9 @@ impl Maintainers {
                 title = None;
                 continue;
             }
-            let tagged = line.len() > 2 && line.as_bytes()[1] == b':' && line.as_bytes()[0].is_ascii_uppercase();
+            let tagged = line.len() > 2
+                && line.as_bytes()[1] == b':'
+                && line.as_bytes()[0].is_ascii_uppercase();
             if !tagged {
                 if title.is_none() {
                     title = Some(line.trim().to_owned());
@@ -343,7 +391,10 @@ impl Maintainers {
             .ok()?
             .to_string_lossy()
             .replace('\\', "/");
-        Some(Self { by_directory, offset })
+        Some(Self {
+            by_directory,
+            offset,
+        })
     }
 
     fn full(&self, directory: &str) -> String {
@@ -387,7 +438,11 @@ impl Maintainers {
         }
         let mut ranked: Vec<(&str, usize)> = counts.into_iter().collect();
         ranked.sort_by(|left, right| right.1.cmp(&left.1).then(left.0.cmp(right.0)));
-        ranked.into_iter().take(limit).map(|(title, _)| title.to_owned()).collect()
+        ranked
+            .into_iter()
+            .take(limit)
+            .map(|(title, _)| title.to_owned())
+            .collect()
     }
 }
 
@@ -453,7 +508,11 @@ fn package_runner(directory: &Path) -> &'static str {
 /// Build and test commands a manifest declares, in the directory it lives in.
 fn build_commands(root: &Path, directory: &str) -> Vec<String> {
     let absolute = root.join(directory);
-    let place = if directory.is_empty() { ".".to_owned() } else { format!("{directory}/") };
+    let place = if directory.is_empty() {
+        ".".to_owned()
+    } else {
+        format!("{directory}/")
+    };
     let mut rows = Vec::new();
     if let Ok(text) = fs::read_to_string(absolute.join("Cargo.toml")) {
         let workspace = text.contains("[workspace]");
@@ -463,7 +522,11 @@ fn build_commands(root: &Path, directory: &str) -> Vec<String> {
                     .is_ok_and(|text| text.contains("[workspace]"))
             });
         if !in_ancestor_workspace {
-            let kind = if workspace { "Rust workspace" } else { "Rust crate" };
+            let kind = if workspace {
+                "Rust workspace"
+            } else {
+                "Rust crate"
+            };
             rows.push(format!("{place} ({kind}): `cargo build` · `cargo test`"));
         }
     }
@@ -471,33 +534,56 @@ fn build_commands(root: &Path, directory: &str) -> Vec<String> {
         if let Ok(value) = serde_json::from_str::<serde_json::Value>(&text) {
             let runner = package_runner(&absolute);
             let scripts = value.get("scripts").and_then(|v| v.as_object());
-            let chosen: Vec<String> = ["dev", "start", "build", "test", "check", "typecheck", "lint"]
-                .iter()
-                .filter(|name| scripts.is_some_and(|scripts| scripts.contains_key(**name)))
-                .map(|name| format!("`{runner} run {name}`"))
-                .collect();
+            let chosen: Vec<String> = [
+                "dev",
+                "start",
+                "build",
+                "test",
+                "check",
+                "typecheck",
+                "lint",
+            ]
+            .iter()
+            .filter(|name| scripts.is_some_and(|scripts| scripts.contains_key(**name)))
+            .map(|name| format!("`{runner} run {name}`"))
+            .collect();
             if !chosen.is_empty() {
-                rows.push(format!("{place} (package.json, {runner}): {}", chosen.join(" · ")));
+                rows.push(format!(
+                    "{place} (package.json, {runner}): {}",
+                    chosen.join(" · ")
+                ));
             }
         }
     }
     if absolute.join("go.mod").exists() {
-        rows.push(format!("{place} (Go module): `go build ./...` · `go test ./...`"));
+        rows.push(format!(
+            "{place} (Go module): `go build ./...` · `go test ./...`"
+        ));
     }
     if absolute.join("pyproject.toml").exists() || absolute.join("setup.py").exists() {
-        let runner = if absolute.join("uv.lock").exists() { "uv run " } else { "" };
+        let runner = if absolute.join("uv.lock").exists() {
+            "uv run "
+        } else {
+            ""
+        };
         rows.push(format!("{place} (Python): `{runner}pytest`"));
     }
     if absolute.join("Package.swift").exists() {
-        rows.push(format!("{place} (Swift package): `swift build` · `swift test`"));
+        rows.push(format!(
+            "{place} (Swift package): `swift build` · `swift test`"
+        ));
     }
     if absolute.join("gradlew").exists() {
-        rows.push(format!("{place} (Gradle): `./gradlew build` · `./gradlew test`"));
+        rows.push(format!(
+            "{place} (Gradle): `./gradlew build` · `./gradlew test`"
+        ));
     }
     if let Ok(text) = fs::read_to_string(absolute.join("Makefile")) {
         // Unique public targets, conventional ones first. Internal targets
         // (a leading underscore) and pattern rules are not for a newcomer.
-        const CONVENTIONAL: &[&str] = &["help", "all", "build", "test", "check", "lint", "install", "clean"];
+        const CONVENTIONAL: &[&str] = &[
+            "help", "all", "build", "test", "check", "lint", "install", "clean",
+        ];
         let mut seen = BTreeSet::new();
         let mut names: Vec<&str> = text
             .lines()
@@ -505,13 +591,24 @@ fn build_commands(root: &Path, directory: &str) -> Vec<String> {
                 let (name, _) = line.split_once(':')?;
                 (!name.is_empty()
                     && !name.starts_with(['.', '\t', ' ', '#', '_'])
-                    && name.chars().all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_'))
+                    && name
+                        .chars()
+                        .all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_'))
                 .then_some(name)
             })
             .filter(|name| seen.insert(*name))
             .collect();
-        names.sort_by_key(|name| CONVENTIONAL.iter().position(|known| known == name).unwrap_or(usize::MAX));
-        let targets: Vec<String> = names.into_iter().take(6).map(|name| format!("`make {name}`")).collect();
+        names.sort_by_key(|name| {
+            CONVENTIONAL
+                .iter()
+                .position(|known| known == name)
+                .unwrap_or(usize::MAX)
+        });
+        let targets: Vec<String> = names
+            .into_iter()
+            .take(6)
+            .map(|name| format!("`make {name}`"))
+            .collect();
         if !targets.is_empty() {
             rows.push(format!("{place} (Makefile): {}", targets.join(" · ")));
         }
@@ -570,8 +667,13 @@ fn layout_groups(records: &[SourceRecord], package_roots: &BTreeSet<String>) -> 
                 .unwrap_or("")
                 .to_owned()
         };
-        let mut prefixes: BTreeSet<String> = records.iter().map(|record| top(&record.relative)).collect();
-        let total_loc: usize = records.iter().map(|record| record.loc).sum::<usize>().max(1);
+        let mut prefixes: BTreeSet<String> =
+            records.iter().map(|record| top(&record.relative)).collect();
+        let total_loc: usize = records
+            .iter()
+            .map(|record| record.loc)
+            .sum::<usize>()
+            .max(1);
         let owner_of = |prefixes: &BTreeSet<String>, relative: &str| {
             prefixes
                 .iter()
@@ -586,10 +688,15 @@ fn layout_groups(records: &[SourceRecord], package_roots: &BTreeSet<String>) -> 
         while prefixes.len() < row_limit {
             let mut sizes: BTreeMap<String, usize> = BTreeMap::new();
             for record in records {
-                *sizes.entry(owner_of(&prefixes, &record.relative)).or_default() += record.loc;
+                *sizes
+                    .entry(owner_of(&prefixes, &record.relative))
+                    .or_default() += record.loc;
             }
             let mut expansion = None;
-            let mut rows: Vec<(&String, &usize)> = sizes.iter().filter(|(prefix, _)| !prefix.is_empty()).collect();
+            let mut rows: Vec<(&String, &usize)> = sizes
+                .iter()
+                .filter(|(prefix, _)| !prefix.is_empty())
+                .collect();
             rows.sort_by(|left, right| right.1.cmp(left.1));
             for (prefix, loc) in rows {
                 if *loc * 4 < total_loc {
@@ -627,9 +734,18 @@ fn layout_groups(records: &[SourceRecord], package_roots: &BTreeSet<String>) -> 
     }
     let mut groups: Vec<Group> = totals
         .into_iter()
-        .map(|(directory, (files, loc))| Group { directory, files, loc })
+        .map(|(directory, (files, loc))| Group {
+            directory,
+            files,
+            loc,
+        })
         .collect();
-    groups.sort_by(|left, right| right.loc.cmp(&left.loc).then(left.directory.cmp(&right.directory)));
+    groups.sort_by(|left, right| {
+        right
+            .loc
+            .cmp(&left.loc)
+            .then(left.directory.cmp(&right.directory))
+    });
     groups
 }
 
@@ -660,7 +776,17 @@ fn language_family(path: &str) -> &'static str {
     }
 }
 
-const TYPE_KINDS: &[&str] = &["struct", "union", "enum", "trait", "type", "typedef", "class", "interface", "protocol"];
+const TYPE_KINDS: &[&str] = &[
+    "struct",
+    "union",
+    "enum",
+    "trait",
+    "type",
+    "typedef",
+    "class",
+    "interface",
+    "protocol",
+];
 
 /// Files other files depend on most: distinct files that import them, or that
 /// name a type (struct, class, trait...) they uniquely define in the same
@@ -668,7 +794,10 @@ const TYPE_KINDS: &[&str] = &["struct", "union", "enum", "trait", "type", "typed
 /// or `unwrap` defined in one file would otherwise collect every caller of an
 /// unrelated method with the same name, across languages.
 fn central_files(records: &[SourceRecord]) -> Vec<(usize, usize)> {
-    let paths: HashSet<String> = records.iter().map(|record| record.relative.clone()).collect();
+    let paths: HashSet<String> = records
+        .iter()
+        .map(|record| record.relative.clone())
+        .collect();
     let index_of: HashMap<&str, usize> = records
         .iter()
         .enumerate()
@@ -718,7 +847,12 @@ fn central_files(records: &[SourceRecord]) -> Vec<(usize, usize)> {
         .filter(|(index, set)| set.len() >= 2 && !test_like(&records[*index].relative))
         .map(|(index, set)| (index, set.len()))
         .collect();
-    ranked.sort_by(|left, right| right.1.cmp(&left.1).then(records[left.0].relative.cmp(&records[right.0].relative)));
+    ranked.sort_by(|left, right| {
+        right
+            .1
+            .cmp(&left.1)
+            .then(records[left.0].relative.cmp(&records[right.0].relative))
+    });
     ranked
 }
 
@@ -730,7 +864,11 @@ fn substantive(record: &SourceRecord) -> u8 {
     let functions = record
         .definitions
         .iter()
-        .filter(|definition| definition.split_once(' ').is_some_and(|(kind, _)| FUNCTION_KINDS.contains(&kind)))
+        .filter(|definition| {
+            definition
+                .split_once(' ')
+                .is_some_and(|(kind, _)| FUNCTION_KINDS.contains(&kind))
+        })
         .count();
     match functions {
         0 => 0,
@@ -747,35 +885,65 @@ fn substantive(record: &SourceRecord) -> u8 {
 fn file_index(records: &[SourceRecord], cap: usize) -> String {
     let mut directories: BTreeMap<&str, Vec<&SourceRecord>> = BTreeMap::new();
     for record in records {
-        directories.entry(parent(&record.relative)).or_default().push(record);
+        directories
+            .entry(parent(&record.relative))
+            .or_default()
+            .push(record);
     }
     let mut rows: Vec<(&str, Vec<&SourceRecord>)> = directories.into_iter().collect();
     rows.sort_by(|left, right| {
-        let size = |files: &Vec<&SourceRecord>| files.iter().map(|record| record.loc).sum::<usize>();
+        let size =
+            |files: &Vec<&SourceRecord>| files.iter().map(|record| record.loc).sum::<usize>();
         size(&right.1).cmp(&size(&left.1)).then(left.0.cmp(right.0))
     });
     let mut out = String::new();
     for (directory, mut files) in rows {
-        files.sort_by(|left, right| right.loc.cmp(&left.loc).then(left.relative.cmp(&right.relative)));
+        files.sort_by(|left, right| {
+            right
+                .loc
+                .cmp(&left.loc)
+                .then(left.relative.cmp(&right.relative))
+        });
         let extensions: BTreeSet<&str> = files
             .iter()
-            .map(|record| record.relative.rsplit_once('.').map_or("", |(_, extension)| extension))
+            .map(|record| {
+                record
+                    .relative
+                    .rsplit_once('.')
+                    .map_or("", |(_, extension)| extension)
+            })
             .collect();
         let shared = (extensions.len() == 1).then(|| *extensions.iter().next().unwrap_or(&""));
         let names: Vec<&str> = files
             .iter()
             .take(cap)
             .map(|record| {
-                let name = record.relative.rsplit('/').next().unwrap_or(&record.relative);
+                let name = record
+                    .relative
+                    .rsplit('/')
+                    .next()
+                    .unwrap_or(&record.relative);
                 match shared {
-                    Some(extension) if !extension.is_empty() => name.strip_suffix(&format!(".{extension}")).unwrap_or(name),
+                    Some(extension) if !extension.is_empty() => {
+                        name.strip_suffix(&format!(".{extension}")).unwrap_or(name)
+                    }
                     _ => name,
                 }
             })
             .collect();
-        let label = if directory.is_empty() { ".".to_owned() } else { format!("{directory}/") };
-        let kind = shared.filter(|extension| !extension.is_empty()).map_or(String::new(), |extension| format!(", .{extension}"));
-        out.push_str(&format!("{label} ({}{kind}): {}", files.len(), names.join(" ")));
+        let label = if directory.is_empty() {
+            ".".to_owned()
+        } else {
+            format!("{directory}/")
+        };
+        let kind = shared
+            .filter(|extension| !extension.is_empty())
+            .map_or(String::new(), |extension| format!(", .{extension}"));
+        out.push_str(&format!(
+            "{label} ({}{kind}): {}",
+            files.len(),
+            names.join(" ")
+        ));
         if files.len() > cap {
             out.push_str(&format!(" +{}", files.len() - cap));
         }
@@ -811,7 +979,10 @@ pub fn overview(root: &Path, token_budget: usize, max_chars: usize) -> ToolResul
     let maintainers = Maintainers::find(root);
     let name = fs::canonicalize(root)
         .ok()
-        .and_then(|path| path.file_name().map(|name| name.to_string_lossy().into_owned()))
+        .and_then(|path| {
+            path.file_name()
+                .map(|name| name.to_string_lossy().into_owned())
+        })
         .unwrap_or_else(|| root.display().to_string());
     let total_loc: usize = records.iter().map(|record| record.loc).sum();
 
@@ -858,7 +1029,11 @@ pub fn overview(root: &Path, token_budget: usize, max_chars: usize) -> ToolResul
             if let Some(title) = title {
                 purpose.push_str(&format!("{title}: "));
             }
-            purpose.push_str(if body.is_empty() { "(README has no summary paragraph)" } else { &body });
+            purpose.push_str(if body.is_empty() {
+                "(README has no summary paragraph)"
+            } else {
+                &body
+            });
             purpose.push('\n');
         }
         None => purpose.push_str("(no README)\n"),
@@ -877,14 +1052,22 @@ pub fn overview(root: &Path, token_budget: usize, max_chars: usize) -> ToolResul
         .iter()
         .take(6)
         .map(|(language, (files, loc))| {
-            format!("{language} {}% ({files} files)", loc * 100 / total_loc.max(1))
+            format!(
+                "{language} {}% ({files} files)",
+                loc * 100 / total_loc.max(1)
+            )
         })
         .collect::<Vec<_>>()
         .join(" · ");
     budget.push(&format!("\n## Stack\n{stack}\n"));
 
     let commands: Vec<String> = std::iter::once(String::new())
-        .chain(package_roots.iter().filter(|directory| !directory.is_empty()).cloned())
+        .chain(
+            package_roots
+                .iter()
+                .filter(|directory| !directory.is_empty())
+                .cloned(),
+        )
         .flat_map(|directory| build_commands(root, &directory))
         .collect();
     if !commands.is_empty() && budget.push("\n## Build and test\n") {
@@ -907,22 +1090,36 @@ pub fn overview(root: &Path, token_budget: usize, max_chars: usize) -> ToolResul
                 .iter()
                 .filter(|record| {
                     group.directory.is_empty() && !record.relative.contains('/')
-                        || record.relative.starts_with(&format!("{}/", group.directory))
-                            && !groups.iter().any(|child| child.directory.len() > group.directory.len()
-                                && child.directory.starts_with(&format!("{}/", group.directory))
-                                && record.relative.starts_with(&format!("{}/", child.directory)))
+                        || record
+                            .relative
+                            .starts_with(&format!("{}/", group.directory))
+                            && !groups.iter().any(|child| {
+                                child.directory.len() > group.directory.len()
+                                    && child
+                                        .directory
+                                        .starts_with(&format!("{}/", group.directory))
+                                    && record
+                                        .relative
+                                        .starts_with(&format!("{}/", child.directory))
+                            })
                 })
                 .collect();
             let named = maintainers.as_ref().and_then(|map| {
-                map.covering(&group.directory).map(str::to_owned).or_else(|| {
-                    let inside = map.inside(&group.directory, &files, 4);
-                    (!inside.is_empty()).then(|| format!("areas: {}", inside.join(", ")))
-                })
+                map.covering(&group.directory)
+                    .map(str::to_owned)
+                    .or_else(|| {
+                        let inside = map.inside(&group.directory, &files, 4);
+                        (!inside.is_empty()).then(|| format!("areas: {}", inside.join(", ")))
+                    })
             });
             let purpose = named
                 .or_else(|| directory_purpose(root, &group.directory, &files))
                 .unwrap_or_default();
-            let label = if group.directory.is_empty() { "(top level)".to_owned() } else { format!("{}/", group.directory) };
+            let label = if group.directory.is_empty() {
+                "(top level)".to_owned()
+            } else {
+                format!("{}/", group.directory)
+            };
             // The biggest files that define the most code, as paths relative
             // to the row, so an agent has concrete names to reach for.
             // Generated tables (a register header of 20,000 `#define`s, an
@@ -960,13 +1157,35 @@ pub fn overview(root: &Path, token_budget: usize, max_chars: usize) -> ToolResul
 
     let mut entries: Vec<&SourceRecord> = records
         .iter()
-        .filter(|record| !test_like(&record.relative) && entry_point(&record.relative, &package_roots))
+        .filter(|record| {
+            !test_like(&record.relative) && entry_point(&record.relative, &package_roots)
+        })
         .collect();
-    entries.sort_by_key(|record| (record.relative.matches('/').count(), std::cmp::Reverse(record.loc)));
+    entries.sort_by_key(|record| {
+        (
+            record.relative.matches('/').count(),
+            std::cmp::Reverse(record.loc),
+        )
+    });
     if !entries.is_empty() && budget.push("\n## Entry points\n") {
         for record in entries.iter().take(10) {
-            let defs = record.definitions.iter().take(5).cloned().collect::<Vec<_>>().join("; ");
-            let row = format!("{} | {} LOC{}\n", record.relative, record.loc, if defs.is_empty() { String::new() } else { format!(" | {defs}") });
+            let defs = record
+                .definitions
+                .iter()
+                .take(5)
+                .cloned()
+                .collect::<Vec<_>>()
+                .join("; ");
+            let row = format!(
+                "{} | {} LOC{}\n",
+                record.relative,
+                record.loc,
+                if defs.is_empty() {
+                    String::new()
+                } else {
+                    format!(" | {defs}")
+                }
+            );
             if !budget.push(&row) {
                 break;
             }
@@ -987,7 +1206,11 @@ pub fn overview(root: &Path, token_budget: usize, max_chars: usize) -> ToolResul
                     .trim_start()
                     .trim_start_matches("defs: ")
                     .split("; ")
-                    .filter(|definition| TYPE_KINDS.iter().any(|kind| definition.starts_with(&format!("{kind} "))))
+                    .filter(|definition| {
+                        TYPE_KINDS
+                            .iter()
+                            .any(|kind| definition.starts_with(&format!("{kind} ")))
+                    })
                     .take(6)
                     .collect();
                 if !names.is_empty() {
@@ -1006,12 +1229,14 @@ pub fn overview(root: &Path, token_budget: usize, max_chars: usize) -> ToolResul
         root.display()
     );
     let header = "\n## Files (directory (count, extension): names, largest first; +N not shown)\n";
-    let available = budget.remaining.saturating_sub(estimate_tokens(&next) + estimate_tokens(header));
+    let available = budget
+        .remaining
+        .saturating_sub(estimate_tokens(&next) + estimate_tokens(header));
     let most = records.len();
     if available > 40 {
         let (mut low, mut high) = (1usize, most);
         while low < high {
-            let middle = (low + high + 1) / 2;
+            let middle = (low + high).div_ceil(2);
             if estimate_tokens(&file_index(&records, middle)) <= available {
                 low = middle;
             } else {

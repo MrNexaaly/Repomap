@@ -8,7 +8,9 @@ pub(crate) const EXTENSIONS: &[&str] = &["c", "h", "cc", "cpp", "hpp"];
 /// Lines a function's parameter list may span before the search gives up.
 const MAX_SIGNATURE_LINES: usize = 32;
 
-const NOT_FUNCTIONS: &[&str] = &["if", "for", "while", "switch", "return", "sizeof", "defined"];
+const NOT_FUNCTIONS: &[&str] = &[
+    "if", "for", "while", "switch", "return", "sizeof", "defined",
+];
 
 #[derive(Default)]
 pub(crate) struct Definitions {
@@ -37,7 +39,10 @@ impl Definitions {
 
 pub(crate) fn parse(text: &str) -> Definitions {
     let mut in_comment = false;
-    let lines: Vec<&str> = text.lines().map(|line| code_part(line, &mut in_comment)).collect();
+    let lines: Vec<&str> = text
+        .lines()
+        .map(|line| code_part(line, &mut in_comment))
+        .collect();
     let mut found = Definitions::default();
     let mut continued = false;
     let mut typedef_open = false;
@@ -65,9 +70,17 @@ pub(crate) fn parse(text: &str) -> Definitions {
                     }
                 }
             } else if let Some(rest) = directive.strip_prefix("include") {
-                if let Some(target) = rest.trim().strip_prefix('"').and_then(|rest| rest.split('"').next()) {
+                if let Some(target) = rest
+                    .trim()
+                    .strip_prefix('"')
+                    .and_then(|rest| rest.split('"').next())
+                {
                     if !target.is_empty() {
-                        found.imports.push(if target.starts_with('.') { target.to_owned() } else { format!("./{target}") });
+                        found.imports.push(if target.starts_with('.') {
+                            target.to_owned()
+                        } else {
+                            format!("./{target}")
+                        });
                     }
                 }
             }
@@ -157,12 +170,19 @@ fn code_part<'a>(line: &'a str, in_comment: &mut bool) -> &'a str {
 /// The name is empty for an anonymous type.
 fn type_definition<'a>(body: &'a str, next: &str) -> Option<(&'static str, &'a str)> {
     for kind in ["struct", "union", "enum", "class"] {
-        let Some(rest) = body.strip_prefix(kind).filter(|rest| rest.is_empty() || rest.starts_with([' ', '{'])) else {
+        let Some(rest) = body
+            .strip_prefix(kind)
+            .filter(|rest| rest.is_empty() || rest.starts_with([' ', '{']))
+        else {
             continue;
         };
         let mut rest = rest.trim_start();
         if kind == "enum" {
-            rest = rest.strip_prefix("class ").or_else(|| rest.strip_prefix("struct ")).unwrap_or(rest).trim_start();
+            rest = rest
+                .strip_prefix("class ")
+                .or_else(|| rest.strip_prefix("struct "))
+                .unwrap_or(rest)
+                .trim_start();
         }
         rest = skip_attributes(rest);
         let mut name = leading_identifier(rest);
@@ -194,10 +214,17 @@ fn function_definition<'a>(lines: &[&'a str], index: usize) -> Option<(&'a str, 
         return None;
     }
     let start = after_last(head, |character| {
-        !(character.is_ascii_alphanumeric() || character == '_' || character == ':' || character == '~')
+        !(character.is_ascii_alphanumeric()
+            || character == '_'
+            || character == ':'
+            || character == '~')
     });
     let qualified = head[start..].trim_start_matches(':');
-    let simple = qualified.rsplit("::").next().unwrap_or("").trim_start_matches('~');
+    let simple = qualified
+        .rsplit("::")
+        .next()
+        .unwrap_or("")
+        .trim_start_matches('~');
     if simple.is_empty() || NOT_FUNCTIONS.contains(&simple) {
         return None;
     }
@@ -279,7 +306,9 @@ fn parameters_open(line: &str) -> Option<usize> {
     let mut from = 0;
     while let Some(at) = line[from..].find('(').map(|at| at + from) {
         let before = line[..at].trim_end();
-        let word = &before[after_last(before, |character| !(character.is_ascii_alphanumeric() || character == '_'))..];
+        let word = &before[after_last(before, |character| {
+            !(character.is_ascii_alphanumeric() || character == '_')
+        })..];
         if !ATTRIBUTE_KEYWORDS.contains(&word) {
             return Some(at);
         }
@@ -292,9 +321,16 @@ fn parameters_open(line: &str) -> Option<usize> {
 /// ends in a type for the GNU layout's purposes.
 fn without_trailing_attributes(line: &str) -> &str {
     let mut line = line.trim_end();
-    while let Some(at) = ATTRIBUTE_KEYWORDS.iter().filter_map(|keyword| line.rfind(keyword)).max() {
+    while let Some(at) = ATTRIBUTE_KEYWORDS
+        .iter()
+        .filter_map(|keyword| line.rfind(keyword))
+        .max()
+    {
         let word = leading_identifier(&line[at..]);
-        if !skip_balanced(line[at + word.len()..].trim_start(), '(', ')').trim().is_empty() {
+        if !skip_balanced(line[at + word.len()..].trim_start(), '(', ')')
+            .trim()
+            .is_empty()
+        {
             break;
         }
         line = line[..at].trim_end();
@@ -307,7 +343,10 @@ fn without_trailing_attributes(line: &str) -> &str {
 fn strip_qualifiers(mut text: &str) -> &str {
     loop {
         let word = leading_identifier(text);
-        let skip = if matches!(word, "const" | "noexcept" | "override" | "final" | "volatile") {
+        let skip = if matches!(
+            word,
+            "const" | "noexcept" | "override" | "final" | "volatile"
+        ) {
             word.len()
         } else if text.starts_with('&') {
             1
@@ -353,16 +392,27 @@ fn typedef_name(text: &str) -> Option<&str> {
     let declared = match text.find('(') {
         Some(open) => {
             let group = &text[open..];
-            let close = (group.len() - skip_balanced(group, '(', ')').len()).saturating_sub(1).max(1);
+            let close = (group.len() - skip_balanced(group, '(', ')').len())
+                .saturating_sub(1)
+                .max(1);
             let inner = &group[1..close];
-            if inner.contains('*') { inner } else { &text[..open] }
+            if inner.contains('*') {
+                inner
+            } else {
+                &text[..open]
+            }
         }
-        None => text.split(',').next().unwrap_or("").split('[').next().unwrap_or(""),
+        None => text
+            .split(',')
+            .next()
+            .unwrap_or("")
+            .split('[')
+            .next()
+            .unwrap_or(""),
     };
     declared
         .split(|character: char| !character.is_ascii_alphanumeric() && character != '_')
-        .filter(|part| is_identifier(part) && !part.starts_with("__"))
-        .last()
+        .rfind(|part| is_identifier(part) && !part.starts_with("__"))
 }
 
 /// Skips `[[...]]`, `__attribute__((...))`, `alignas(...)`, `__declspec(...)`
@@ -385,7 +435,8 @@ fn skip_attributes(mut text: &str) -> &str {
             continue;
         }
         if is_macro_name(word)
-            && after.starts_with(|character: char| character.is_ascii_alphabetic() || character == '_')
+            && after
+                .starts_with(|character: char| character.is_ascii_alphabetic() || character == '_')
             && leading_identifier(after) != "final"
         {
             text = after;
@@ -429,13 +480,17 @@ fn leading_identifier(text: &str) -> &str {
 
 fn is_identifier(name: &str) -> bool {
     name.starts_with(|character: char| character.is_ascii_alphabetic() || character == '_')
-        && name.chars().all(|character| character.is_ascii_alphanumeric() || character == '_')
+        && name
+            .chars()
+            .all(|character| character.is_ascii_alphanumeric() || character == '_')
 }
 
 fn is_macro_name(name: &str) -> bool {
     name.len() >= 2
         && name.chars().any(|character| character.is_ascii_uppercase())
-        && name.chars().all(|character| character.is_ascii_uppercase() || character.is_ascii_digit() || character == '_')
+        && name.chars().all(|character| {
+            character.is_ascii_uppercase() || character.is_ascii_digit() || character == '_'
+        })
 }
 
 #[cfg(test)]
@@ -452,7 +507,13 @@ mod tests {
         for path in std::fs::read_to_string(list).unwrap().lines() {
             let bytes = std::fs::read(path).unwrap_or_default();
             let found = parse(&String::from_utf8_lossy(&bytes));
-            let quote = |values: &[String]| values.iter().map(|value| format!("{value:?}")).collect::<Vec<_>>().join(",");
+            let quote = |values: &[String]| {
+                values
+                    .iter()
+                    .map(|value| format!("{value:?}"))
+                    .collect::<Vec<_>>()
+                    .join(",")
+            };
             println!(
                 "{{\"path\":{path:?},\"definitions\":[{}],\"macros\":[{}]}}",
                 quote(&found.definitions),
@@ -573,7 +634,19 @@ enum foo_state { FOO_IDLE, FOO_BUSY };
 
     #[test]
     fn unfinished_lines_do_not_panic() {
-        for source in ["typedef void (", "typedef (", "int f(", "struct", "typedef struct", "#define", "}", "x(\n", "static int __attribute__((x", "__attribute__((", "int\n__attribute__((a)) f("] {
+        for source in [
+            "typedef void (",
+            "typedef (",
+            "int f(",
+            "struct",
+            "typedef struct",
+            "#define",
+            "}",
+            "x(\n",
+            "static int __attribute__((x",
+            "__attribute__((",
+            "int\n__attribute__((a)) f(",
+        ] {
             parse(source);
         }
     }
@@ -600,8 +673,13 @@ enum foo_state { FOO_IDLE, FOO_BUSY };
             }
         }
         // Non-ASCII identifiers are not read (rare; ASCII names around them are).
-        assert!(parse("extern \"C\" void test_𐀀(void) {\n}\n").definitions.is_empty());
-        assert_eq!(parse("/* µ */ int ƒ_helper_µ(void);\nint plain(void) {\n}\n").definitions, ["fn plain"]);
+        assert!(parse("extern \"C\" void test_𐀀(void) {\n}\n")
+            .definitions
+            .is_empty());
+        assert_eq!(
+            parse("/* µ */ int ƒ_helper_µ(void);\nint plain(void) {\n}\n").definitions,
+            ["fn plain"]
+        );
     }
 
     #[test]

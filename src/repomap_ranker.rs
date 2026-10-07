@@ -781,7 +781,10 @@ fn text_rank_and_pack(
     bodies: &[&[(String, u32)]],
 ) -> Vec<usize> {
     let hashed: Vec<_> = bodies.iter().map(|body| hash_terms(body)).collect();
-    let paths: Vec<_> = files.iter().map(|file| hash_terms(&term_counts(&file.path))).collect();
+    let paths: Vec<_> = files
+        .iter()
+        .map(|file| hash_terms(&term_counts(&file.path)))
+        .collect();
     let symbols: Vec<_> = files
         .iter()
         .map(|file| hash_terms(&term_counts(&file.symbols.join(" "))))
@@ -878,7 +881,8 @@ pub(crate) fn rank_with_hashed_terms(
     for (term, _) in &query {
         // Singular and plural match each other both ways ("dog"/"dogs");
         // words ending in "ss" ("class") are not plurals.
-        let alternate = if term.chars().count() >= 4 && term.ends_with('s') && !term.ends_with("ss") {
+        let alternate = if term.chars().count() >= 4 && term.ends_with('s') && !term.ends_with("ss")
+        {
             term[..term.len() - 1].to_owned()
         } else {
             format!("{term}s")

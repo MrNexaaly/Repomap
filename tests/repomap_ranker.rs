@@ -588,7 +588,8 @@ fn full_text_splits_acronyms_and_ties_are_deterministic() {
 
 #[test]
 fn tokenizer_splits_camel_acronyms_and_unicode_like_before() {
-    let terms = repomap::repomap_ranker::term_counts("parseHTTPResponse XMLHttpRequest über_Größe a1B2 x");
+    let terms =
+        repomap::repomap_ranker::term_counts("parseHTTPResponse XMLHttpRequest über_Größe a1B2 x");
     let words: Vec<&str> = terms.iter().map(|(word, _)| word.as_str()).collect();
     assert_eq!(
         words,

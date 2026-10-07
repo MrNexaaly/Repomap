@@ -41,9 +41,9 @@ fn tools() -> Value {
             "name": "repomap_overview",
             "title": "Repository overview",
             "description": "Orientation map for a repository you are new to: its purpose (from the README), \
-languages, build and test commands (from manifests), layout of packages/directories with each one's \
-stated purpose, entry points, and the files the rest of the code depends on most. Call it first in an \
-unfamiliar codebase. Default budget 2000 tokens; typically under 100 ms.",
+    languages, build and test commands (from manifests), layout of packages/directories with each one's \
+    stated purpose, entry points, and the files the rest of the code depends on most. Call it first in an \
+    unfamiliar codebase. Default budget 2000 tokens; typically under 100 ms.",
             "inputSchema": {
                 "type": "object",
                 "properties": {"dir": dir, "token_budget": budget},
@@ -55,9 +55,9 @@ unfamiliar codebase. Default budget 2000 tokens; typically under 100 ms.",
             "name": "repomap_query",
             "title": "Files for a task",
             "description": "Ranks the repository's files for a task or question and returns the top ones, best \
-first, each with its definitions, local imports and cross-file references, packed into a token budget. \
-Call it before grepping for where something lives or before starting a change. Pass the task in plain \
-words; add paths/symbols already mentioned so they are prioritized. Default budget 3000 tokens.",
+    first, each with its definitions, local imports and cross-file references, packed into a token budget. \
+    Call it before grepping for where something lives or before starting a change. Pass the task in plain \
+    words; add paths/symbols already mentioned so they are prioritized. Default budget 3000 tokens.",
             "inputSchema": {
                 "type": "object",
                 "properties": {
@@ -93,7 +93,12 @@ fn string_list(arguments: &Value, key: &str) -> Result<Vec<String>, String> {
         None | Some(Value::Null) => Ok(Vec::new()),
         Some(Value::Array(values)) => values
             .iter()
-            .map(|value| value.as_str().map(str::to_owned).ok_or(format!("{key} must contain only strings")))
+            .map(|value| {
+                value
+                    .as_str()
+                    .map(str::to_owned)
+                    .ok_or(format!("{key} must contain only strings"))
+            })
             .collect(),
         Some(_) => Err(format!("{key} must be an array of strings")),
     }
@@ -123,7 +128,11 @@ fn call_tool(name: &str, arguments: &Value) -> Result<Value, String> {
         ),
     };
     match name {
-        "repomap_overview" => Ok(text_result(overview(&dir, budget.unwrap_or(2000), MAX_CHARS))),
+        "repomap_overview" => Ok(text_result(overview(
+            &dir,
+            budget.unwrap_or(2000),
+            MAX_CHARS,
+        ))),
         "repomap_query" => {
             let query = arguments
                 .get("query")
@@ -141,7 +150,9 @@ fn call_tool(name: &str, arguments: &Value) -> Result<Value, String> {
                 Some("compact") => Detail::Compact,
                 Some(other) => return Err(format!("detail must be full or compact, not {other}")),
             };
-            Ok(text_result(repo_map_with_detail(&dir, MAX_CHARS, &context, detail)))
+            Ok(text_result(repo_map_with_detail(
+                &dir, MAX_CHARS, &context, detail,
+            )))
         }
         other => Err(format!("unknown tool: {other}")),
     }
@@ -156,16 +167,28 @@ fn handle(request: &Value) -> Option<Value> {
     let id = request.get("id").cloned();
     let method = request.get("method").and_then(Value::as_str).unwrap_or("");
     let params = request.get("params").cloned().unwrap_or(Value::Null);
-    let modern = params.pointer("/_meta").and_then(|meta| meta.get(VERSION_KEY)).and_then(Value::as_str);
+    let modern = params
+        .pointer("/_meta")
+        .and_then(|meta| meta.get(VERSION_KEY))
+        .and_then(Value::as_str);
     if let Some(version) = modern {
         if !MODERN_VERSIONS.contains(&version) && !LEGACY_VERSIONS.contains(&version) {
-            return id.map(|id| reply(id, Err(Failure::UnsupportedVersion(version.to_owned())), false));
+            return id.map(|id| {
+                reply(
+                    id,
+                    Err(Failure::UnsupportedVersion(version.to_owned())),
+                    false,
+                )
+            });
         }
     }
     let modern = modern.is_some_and(|version| MODERN_VERSIONS.contains(&version));
     let outcome: Result<Value, Failure> = match method {
         "initialize" => {
-            let requested = params.get("protocolVersion").and_then(Value::as_str).unwrap_or("");
+            let requested = params
+                .get("protocolVersion")
+                .and_then(Value::as_str)
+                .unwrap_or("");
             let version = LEGACY_VERSIONS
                 .iter()
                 .find(|known| **known == requested)
@@ -187,11 +210,17 @@ fn handle(request: &Value) -> Option<Value> {
         "tools/list" => Ok(json!({"tools": tools()})),
         "tools/call" => {
             let name = params.get("name").and_then(Value::as_str).unwrap_or("");
-            let arguments = params.get("arguments").cloned().unwrap_or_else(|| json!({}));
+            let arguments = params
+                .get("arguments")
+                .cloned()
+                .unwrap_or_else(|| json!({}));
             call_tool(name, &arguments).map_err(|message| Failure::Error(-32602, message))
         }
         _ if method.starts_with("notifications/") => return None,
-        _ => Err(Failure::Error(-32601, format!("method not found: {method}"))),
+        _ => Err(Failure::Error(
+            -32601,
+            format!("method not found: {method}"),
+        )),
     };
     // Notifications (no id) never get a response, even on error.
     Some(reply(id?, outcome, modern || method == "server/discover"))
@@ -235,7 +264,7 @@ pub fn serve() -> io::Result<()> {
         let reply = match serde_json::from_str::<Value>(&line) {
             Ok(Value::Array(batch)) => {
                 let replies: Vec<Value> = batch.iter().filter_map(handle).collect();
-                (!replies.is_empty()).then(|| Value::Array(replies))
+                (!replies.is_empty()).then_some(Value::Array(replies))
             }
             Ok(request) => handle(&request),
             Err(error) => Some(json!({
@@ -261,22 +290,40 @@ mod tests {
     fn handshake_lists_tools_and_answers_calls() {
         let init = handle(&json!({"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"t","version":"0"}}})).unwrap();
         assert_eq!(init["result"]["protocolVersion"], "2025-06-18");
-        assert!(init["result"]["instructions"].as_str().unwrap().contains("repomap_overview"));
+        assert!(init["result"]["instructions"]
+            .as_str()
+            .unwrap()
+            .contains("repomap_overview"));
         assert!(handle(&json!({"jsonrpc":"2.0","method":"notifications/initialized"})).is_none());
 
         let list = handle(&json!({"jsonrpc":"2.0","id":2,"method":"tools/list"})).unwrap();
-        let names: Vec<&str> = list["result"]["tools"].as_array().unwrap().iter().map(|tool| tool["name"].as_str().unwrap()).collect();
+        let names: Vec<&str> = list["result"]["tools"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|tool| tool["name"].as_str().unwrap())
+            .collect();
         assert_eq!(names, ["repomap_overview", "repomap_query"]);
 
         let directory = tempfile::tempdir().unwrap();
-        std::fs::write(directory.path().join("payments.rs"), "pub fn authorize_payment() {}\n").unwrap();
+        std::fs::write(
+            directory.path().join("payments.rs"),
+            "pub fn authorize_payment() {}\n",
+        )
+        .unwrap();
         let dir = directory.path().to_str().unwrap();
         let call = handle(&json!({"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"repomap_query","arguments":{"dir":dir,"query":"authorize payment"}}})).unwrap();
         assert_eq!(call["result"]["isError"], false);
-        assert!(call["result"]["content"][0]["text"].as_str().unwrap().contains("payments.rs"));
+        assert!(call["result"]["content"][0]["text"]
+            .as_str()
+            .unwrap()
+            .contains("payments.rs"));
 
         let overview = handle(&json!({"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"repomap_overview","arguments":{"dir":dir}}})).unwrap();
-        assert!(overview["result"]["content"][0]["text"].as_str().unwrap().contains("repository overview"));
+        assert!(overview["result"]["content"][0]["text"]
+            .as_str()
+            .unwrap()
+            .contains("repository overview"));
 
         let missing = handle(&json!({"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"repomap_query","arguments":{"dir":dir}}})).unwrap();
         assert_eq!(missing["error"]["code"], -32602);
@@ -290,13 +337,22 @@ mod tests {
         let discover = handle(&json!({"jsonrpc":"2.0","id":"d","method":"server/discover","params":meta("2026-07-28")})).unwrap();
         assert_eq!(discover["result"]["resultType"], "complete");
         assert_eq!(discover["result"]["supportedVersions"][0], "2026-07-28");
-        assert_eq!(discover["result"]["_meta"]["io.modelcontextprotocol/serverInfo"]["name"], "repomap");
+        assert_eq!(
+            discover["result"]["_meta"]["io.modelcontextprotocol/serverInfo"]["name"],
+            "repomap"
+        );
 
-        let list = handle(&json!({"jsonrpc":"2.0","id":1,"method":"tools/list","params":meta("2026-07-28")})).unwrap();
+        let list = handle(
+            &json!({"jsonrpc":"2.0","id":1,"method":"tools/list","params":meta("2026-07-28")}),
+        )
+        .unwrap();
         assert_eq!(list["result"]["resultType"], "complete");
         assert_eq!(list["result"]["tools"].as_array().unwrap().len(), 2);
 
-        let unknown = handle(&json!({"jsonrpc":"2.0","id":2,"method":"tools/list","params":meta("1900-01-01")})).unwrap();
+        let unknown = handle(
+            &json!({"jsonrpc":"2.0","id":2,"method":"tools/list","params":meta("1900-01-01")}),
+        )
+        .unwrap();
         assert_eq!(unknown["error"]["code"], UNSUPPORTED_PROTOCOL_VERSION);
         assert_eq!(unknown["error"]["data"]["requested"], "1900-01-01");
         assert_eq!(unknown["error"]["data"]["supported"][0], "2026-07-28");

@@ -10,13 +10,28 @@ fn run(arguments: &[&str]) -> std::process::Output {
 #[test]
 fn bare_invocation_is_the_overview() {
     let directory = tempfile::tempdir().unwrap();
-    fs::write(directory.path().join("README.md"), "# Demo\n\nA demo service that greets people.\n").unwrap();
-    fs::write(directory.path().join("main.rs"), "//! Greets people.\nfn main() {}\n").unwrap();
+    fs::write(
+        directory.path().join("README.md"),
+        "# Demo\n\nA demo service that greets people.\n",
+    )
+    .unwrap();
+    fs::write(
+        directory.path().join("main.rs"),
+        "//! Greets people.\nfn main() {}\n",
+    )
+    .unwrap();
     let output = run(&[directory.path().to_str().unwrap()]);
     let stdout = String::from_utf8(output.stdout).unwrap();
-    assert!(output.status.success(), "{}", String::from_utf8_lossy(&output.stderr));
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
     assert!(stdout.contains("repository overview"), "{stdout}");
-    assert!(stdout.contains("A demo service that greets people."), "{stdout}");
+    assert!(
+        stdout.contains("A demo service that greets people."),
+        "{stdout}"
+    );
     assert!(stdout.contains("## Files"), "{stdout}");
 }
 
@@ -34,7 +49,12 @@ fn legacy_terminal_interface_uses_the_native_structural_map() {
     )
     .unwrap();
 
-    let output = run(&[directory.path().to_str().unwrap(), "--list", "--max-chars", "12000"]);
+    let output = run(&[
+        directory.path().to_str().unwrap(),
+        "--list",
+        "--max-chars",
+        "12000",
+    ]);
     let stdout = String::from_utf8(output.stdout).unwrap();
     assert!(
         output.status.success(),
@@ -107,7 +127,13 @@ fn maintainers_names_areas_and_zoomed_maps_find_it() {
         "THE REST\nF:\t*\nF:\t*/\n\nEXT4 FILE SYSTEM\nL:\tlinux-ext4@example.org\nF:\tfs/ext4/\n\nNETWORKING DRIVERS\nF:\tdrivers/net/\n\nINTEL ETHERNET DRIVERS\nF:\tdrivers/net/ethernet/intel/\n",
     )
     .unwrap();
-    for file in ["fs/ext4/inode.c", "fs/ext4/super.c", "drivers/net/tun.c", "drivers/net/ethernet/intel/igb.c", "init/main.c"] {
+    for file in [
+        "fs/ext4/inode.c",
+        "fs/ext4/super.c",
+        "drivers/net/tun.c",
+        "drivers/net/ethernet/intel/igb.c",
+        "init/main.c",
+    ] {
         let path = root.join(file);
         fs::create_dir_all(path.parent().unwrap()).unwrap();
         fs::write(path, "int x;\n").unwrap();
@@ -115,8 +141,15 @@ fn maintainers_names_areas_and_zoomed_maps_find_it() {
     let top = String::from_utf8(run(&[root.to_str().unwrap()]).stdout).unwrap();
     assert!(top.contains("EXT4 FILE SYSTEM"), "{top}");
     assert!(top.contains("NETWORKING DRIVERS"), "{top}");
-    assert!(!top.contains("THE REST"), "catch-all sections name nothing: {top}");
-    let zoomed = String::from_utf8(run(&[root.join("drivers/net").to_str().unwrap()]).stdout).unwrap();
+    assert!(
+        !top.contains("THE REST"),
+        "catch-all sections name nothing: {top}"
+    );
+    let zoomed =
+        String::from_utf8(run(&[root.join("drivers/net").to_str().unwrap()]).stdout).unwrap();
     assert!(zoomed.contains("INTEL ETHERNET DRIVERS"), "{zoomed}");
-    assert!(zoomed.contains("drivers/net/<directory>") || zoomed.contains("/<directory>"), "{zoomed}");
+    assert!(
+        zoomed.contains("drivers/net/<directory>") || zoomed.contains("/<directory>"),
+        "{zoomed}"
+    );
 }

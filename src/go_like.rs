@@ -39,7 +39,10 @@ pub(crate) fn parse(text: &str) -> Definitions {
             continue;
         }
         for kind in ["type", "var", "const"] {
-            let Some(rest) = trimmed.strip_prefix(kind).filter(|rest| rest.starts_with([' ', '('])) else {
+            let Some(rest) = trimmed
+                .strip_prefix(kind)
+                .filter(|rest| rest.starts_with([' ', '(']))
+            else {
                 continue;
             };
             let rest = rest.trim_start();
@@ -84,7 +87,10 @@ fn declared(kind: &str, text: &str, found: &mut Definitions) {
 }
 
 fn add(found: &mut Definitions, kind: &str, name: &str, owner: Option<&str>) {
-    if name.is_empty() || name == "_" || name.starts_with(|character: char| character.is_ascii_digit()) {
+    if name.is_empty()
+        || name == "_"
+        || name.starts_with(|character: char| character.is_ascii_digit())
+    {
         return;
     }
     found.definitions.push(match owner {

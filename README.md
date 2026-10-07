@@ -28,6 +28,8 @@ Recorded release benchmarks, September–October 2026. Warm-cache timings; paire
 
 ## Try it
 
+[Download Linux x86_64 v0.1.0](https://github.com/MrNexaaly/Repomap/releases/tag/v0.1.0) — binary, usage notes and SHA-256 checksums.
+
 ```sh
 cargo build --release
 target/release/repomap .

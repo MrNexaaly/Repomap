@@ -102,13 +102,38 @@ impl SourceRecord {
             relative: relative.to_owned(),
             loc: usize::try_from(reader.u64()?).ok()?,
             definitions: reader.strs()?,
-            symbols: if summary { reader.skip_strs()?; Vec::new() } else { reader.strs()? },
+            symbols: if summary {
+                reader.skip_strs()?;
+                Vec::new()
+            } else {
+                reader.strs()?
+            },
             imports: reader.strs()?,
-            identifier_hashes: if summary { reader.skip_u64s()?; Vec::new() } else { reader.u64s()? },
+            identifier_hashes: if summary {
+                reader.skip_u64s()?;
+                Vec::new()
+            } else {
+                reader.u64s()?
+            },
             entrypoint: reader.u64()? != 0,
-            terms: if summary { reader.skip_u64s()?; Vec::new() } else { Self::decode_terms(&mut reader)? },
-            path_terms: if summary { reader.skip_u64s()?; Vec::new() } else { Self::decode_terms(&mut reader)? },
-            symbol_terms: if summary { reader.skip_u64s()?; Vec::new() } else { Self::decode_terms(&mut reader)? },
+            terms: if summary {
+                reader.skip_u64s()?;
+                Vec::new()
+            } else {
+                Self::decode_terms(&mut reader)?
+            },
+            path_terms: if summary {
+                reader.skip_u64s()?;
+                Vec::new()
+            } else {
+                Self::decode_terms(&mut reader)?
+            },
+            symbol_terms: if summary {
+                reader.skip_u64s()?;
+                Vec::new()
+            } else {
+                Self::decode_terms(&mut reader)?
+            },
             references: Vec::new(),
             changed: false,
         };
@@ -157,13 +182,19 @@ fn strip_rust_prefixes(mut line: &str) -> &str {
         // `const fn` and `extern "C" fn` qualify a function; a bare `const`
         // or `static` is an item of its own and must stay.
         if let Some(rest) = line.strip_prefix("const ") {
-            if ["fn ", "unsafe ", "async ", "extern "].iter().any(|next| rest.starts_with(next)) {
+            if ["fn ", "unsafe ", "async ", "extern "]
+                .iter()
+                .any(|next| rest.starts_with(next))
+            {
                 line = rest;
             }
         }
         if let Some(rest) = line.strip_prefix("extern ") {
             let rest = match rest.strip_prefix('"') {
-                Some(abi) => abi.split_once('"').map_or("", |(_, after)| after).trim_start(),
+                Some(abi) => abi
+                    .split_once('"')
+                    .map_or("", |(_, after)| after)
+                    .trim_start(),
                 None => rest,
             };
             if rest.starts_with("fn ") || rest.starts_with("unsafe ") {
@@ -232,8 +263,7 @@ fn identifier_hashes(text: &str) -> Vec<u64> {
     };
     for byte in text.bytes() {
         if byte.is_ascii_alphanumeric() || byte == b'_' {
-            current_hash = (current_hash ^ u64::from(byte))
-                .wrapping_mul(IDENTIFIER_HASH_PRIME);
+            current_hash = (current_hash ^ u64::from(byte)).wrapping_mul(IDENTIFIER_HASH_PRIME);
             current_len = current_len.saturating_add(1);
         } else if current_len > 0 {
             finish(&mut identifiers, &mut current_hash, &mut current_len);
@@ -252,7 +282,10 @@ fn distinctive_graph_symbol(symbol: &str) -> bool {
     if COMMON_GRAPH_SYMBOLS.contains(&normalized.as_str()) {
         return false;
     }
-    if !symbol.chars().any(|character| character.is_ascii_lowercase()) {
+    if !symbol
+        .chars()
+        .any(|character| character.is_ascii_lowercase())
+    {
         // An all-caps name is distinctive only as SCREAMING_CASE: a bare
         // `DONE` or `BE` is as likely a word in a comment as a reference.
         return symbol.contains('_') && symbol.len() >= 4;
@@ -452,11 +485,21 @@ fn extract(extension: &str, text: &str) -> Extracted {
         }
     }
 
-    Extracted { definitions, symbols, imports, macros: Vec::new() }
+    Extracted {
+        definitions,
+        symbols,
+        imports,
+        macros: Vec::new(),
+    }
 }
 
 fn parse_source(relative: String, extension: String, text: &str, changed: bool) -> SourceRecord {
-    let Extracted { mut definitions, mut symbols, mut imports, mut macros } = extract(&extension, text);
+    let Extracted {
+        mut definitions,
+        mut symbols,
+        mut imports,
+        mut macros,
+    } = extract(&extension, text);
     definitions.sort();
     definitions.dedup();
     macros.sort();
@@ -474,9 +517,8 @@ fn parse_source(relative: String, extension: String, text: &str, changed: bool) 
         .and_then(|name| name.to_str())
         .unwrap_or("");
     let entrypoint = LEGACY_ENTRY_POINTS.contains(&file_name);
-    let hashed = |text: &str| {
-        crate::repomap_ranker::hash_terms(&crate::repomap_ranker::term_counts(text))
-    };
+    let hashed =
+        |text: &str| crate::repomap_ranker::hash_terms(&crate::repomap_ranker::term_counts(text));
     SourceRecord {
         loc: text.lines().count(),
         definitions,
@@ -571,7 +613,6 @@ fn context_source_files(
                 + i64::from(open) * 800_000
                 + i64::from(changed.contains(&relative)) * 600_000
                 + term_hits * 12_000
-
                 + i64::from(LEGACY_ENTRY_POINTS.contains(&file_name)) * 800
                 + i64::from(lower.contains("/src/") || lower.starts_with("src/")) * 240
                 + i64::from(lower.contains("/agent/") || lower.starts_with("agent/")) * 180
@@ -702,7 +743,12 @@ impl Definers {
 
     /// Distinctive symbols record `index` uses that exactly one other file
     /// defines: mentioned symbols first, then the rest, at most 64.
-    fn references(&self, record: &SourceRecord, index: usize, mentioned: &HashSet<u64>) -> Vec<String> {
+    fn references(
+        &self,
+        record: &SourceRecord,
+        index: usize,
+        mentioned: &HashSet<u64>,
+    ) -> Vec<String> {
         let mut priority_references = BTreeSet::new();
         let mut references = BTreeSet::new();
         for identifier_hash in &record.identifier_hashes {
@@ -781,7 +827,8 @@ fn read_source(path: &Path, relative: String) -> Option<SourceRecord> {
         .to_ascii_lowercase();
     // The definition readers are heuristics over arbitrary text; one that
     // panics on a strange file costs that file its definitions, not the map.
-    let parsed = std::panic::catch_unwind(|| parse_source(relative.clone(), extension, &text, false));
+    let parsed =
+        std::panic::catch_unwind(|| parse_source(relative.clone(), extension, &text, false));
     Some(parsed.unwrap_or_else(|_| parse_source(relative, String::new(), &text, false)))
 }
 
@@ -833,16 +880,25 @@ pub(crate) fn read_records(
     read_records_mode(root, context, timer, all_references, false)
 }
 
-pub(crate) fn read_overview_records(root: &Path, timer: &mut PhaseTimer) -> (Vec<SourceRecord>, usize) {
+pub(crate) fn read_overview_records(
+    root: &Path,
+    timer: &mut PhaseTimer,
+) -> (Vec<SourceRecord>, usize) {
     read_records_mode(root, None, timer, true, true)
 }
 
-fn read_records_mode(root: &Path, context: Option<&RankContext>, timer: &mut PhaseTimer,
-    all_references: bool, overview: bool) -> (Vec<SourceRecord>, usize) {
+fn read_records_mode(
+    root: &Path,
+    context: Option<&RankContext>,
+    timer: &mut PhaseTimer,
+    all_references: bool,
+    overview: bool,
+) -> (Vec<SourceRecord>, usize) {
     let walked_files = walk::source_files_with_metadata(root);
     let summary = overview && walked_files.len() > MAX_QUERY_SOURCE_FILES;
     timer.mark("walk");
-    let fingerprints_by_path: HashMap<PathBuf, walk::Fingerprint> = walked_files.iter().cloned().collect();
+    let fingerprints_by_path: HashMap<PathBuf, walk::Fingerprint> =
+        walked_files.iter().cloned().collect();
     let files: Vec<PathBuf> = walked_files.into_iter().map(|(path, _)| path).collect();
     let walked: Vec<String> = files
         .iter()
@@ -882,27 +938,31 @@ fn read_records_mode(root: &Path, context: Option<&RankContext>, timer: &mut Pha
 
     timer.mark("stat");
     for batch in misses.chunks(128) {
-    let parsed = parse_parallel(batch);
-    for (index, mut record) in parsed {
-        if let Some((modified, len)) = fingerprints[index] {
-            store.insert(
-                record.relative.clone(),
-                cache::Entry {
-                    modified,
-                    len,
-                    payload: record.encode(),
-                },
-            );
+        let parsed = parse_parallel(batch);
+        for (index, mut record) in parsed {
+            if let Some((modified, len)) = fingerprints[index] {
+                store.insert(
+                    record.relative.clone(),
+                    cache::Entry {
+                        modified,
+                        len,
+                        payload: record.encode(),
+                    },
+                );
+            }
+            if summary {
+                record.terms.clear();
+                record.terms.shrink_to_fit();
+                record.path_terms.clear();
+                record.path_terms.shrink_to_fit();
+                record.symbol_terms.clear();
+                record.symbol_terms.shrink_to_fit();
+                record.identifier_hashes.clear();
+                record.identifier_hashes.shrink_to_fit();
+                record.symbols = Vec::new();
+            }
+            slots[index] = Some(record);
         }
-        if summary {
-            record.terms.clear(); record.terms.shrink_to_fit();
-            record.path_terms.clear(); record.path_terms.shrink_to_fit();
-            record.symbol_terms.clear(); record.symbol_terms.shrink_to_fit();
-            record.identifier_hashes.clear(); record.identifier_hashes.shrink_to_fit();
-            record.symbols = Vec::new();
-        }
-        slots[index] = Some(record);
-    }
     }
     timer.mark("parse");
 
@@ -1311,13 +1371,22 @@ mod tests {
     #[test]
     #[ignore]
     fn dump_definitions() {
-        let list = std::env::var("REPOMAP_DUMP_FILES").expect("REPOMAP_DUMP_FILES names a file of paths");
+        let list =
+            std::env::var("REPOMAP_DUMP_FILES").expect("REPOMAP_DUMP_FILES names a file of paths");
         for path in fs::read_to_string(list).unwrap().lines() {
             let text = String::from_utf8_lossy(&fs::read(path).unwrap_or_default()).into_owned();
             let extension = path.rsplit('.').next().unwrap_or("").to_ascii_lowercase();
             let found = extract(&extension, &text);
-            let definitions = found.definitions.iter().chain(&found.macros).map(|value| format!("{value:?}")).collect::<Vec<_>>();
-            println!("{{\"path\":{path:?},\"definitions\":[{}]}}", definitions.join(","));
+            let definitions = found
+                .definitions
+                .iter()
+                .chain(&found.macros)
+                .map(|value| format!("{value:?}"))
+                .collect::<Vec<_>>();
+            println!(
+                "{{\"path\":{path:?},\"definitions\":[{}]}}",
+                definitions.join(",")
+            );
         }
     }
 
@@ -1331,7 +1400,14 @@ mod tests {
         );
         assert_eq!(
             found.definitions,
-            ["const MAX", "static COUNTER", "fn new", "fn hook", "macro ensure", "union Bits"]
+            [
+                "const MAX",
+                "static COUNTER",
+                "fn new",
+                "fn hook",
+                "macro ensure",
+                "union Bits"
+            ]
         );
     }
 
@@ -1358,17 +1434,32 @@ mod tests {
         assert!(map.ok, "{}", map.output);
         // Each file's block: its header line plus the indented lines below.
         let block = |name: &str| {
-            let mut lines = map.output.lines().skip_while(|line| !line.starts_with(&format!("{name} |")));
-            let header = lines.next().unwrap_or_else(|| panic!("{name} missing: {}", map.output));
-            std::iter::once(header).chain(lines.take_while(|line| line.starts_with("  "))).collect::<Vec<_>>().join("\n")
+            let mut lines = map
+                .output
+                .lines()
+                .skip_while(|line| !line.starts_with(&format!("{name} |")));
+            let header = lines
+                .next()
+                .unwrap_or_else(|| panic!("{name} missing: {}", map.output));
+            std::iter::once(header)
+                .chain(lines.take_while(|line| line.starts_with("  ")))
+                .collect::<Vec<_>>()
+                .join("\n")
         };
         let user = block("user.c");
         assert!(user.contains("defs: fn decode"), "{user}");
         assert!(user.contains("imports: ./table.h"), "{user}");
         // A bare all-caps macro (DONE) is not a distinctive reference.
-        assert!(user.contains("refs: TABLE_SIZE; code_table\n") || user.ends_with("refs: TABLE_SIZE; code_table"), "{user}");
+        assert!(
+            user.contains("refs: TABLE_SIZE; code_table\n")
+                || user.ends_with("refs: TABLE_SIZE; code_table"),
+            "{user}"
+        );
         let table = block("table.h");
-        assert!(table.contains("defs: struct code_table; define DONE; define TABLE_SIZE"), "{table}");
+        assert!(
+            table.contains("defs: struct code_table; define DONE; define TABLE_SIZE"),
+            "{table}"
+        );
         // Words in a comment match no identifier of another case.
         let prose = block("prose.c");
         assert!(!prose.contains("refs:"), "{prose}");

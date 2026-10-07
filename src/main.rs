@@ -1,4 +1,6 @@
-use repomap::{overview, repo_map, repo_map_with_detail, repomap_ranker::RankContext, Detail, ToolResult};
+use repomap::{
+    overview, repo_map, repo_map_with_detail, repomap_ranker::RankContext, Detail, ToolResult,
+};
 use std::{
     env,
     ffi::OsString,
@@ -265,14 +267,23 @@ fn main() -> ExitCode {
             || !cli.mentioned_paths.is_empty()
             || !cli.mentioned_symbols.is_empty()
             || !cli.open_paths.is_empty());
-    if [cli.overview, cli.list, task].iter().filter(|chosen| **chosen).count() > 1 {
+    if [cli.overview, cli.list, task]
+        .iter()
+        .filter(|chosen| **chosen)
+        .count()
+        > 1
+    {
         eprintln!("repomap: --overview, --list and a task query are separate maps; choose one");
         return ExitCode::from(2);
     }
     let result = if cli.list {
         repo_map(&cli.directory, cli.max_chars)
     } else if !task {
-        overview(&cli.directory, cli.token_budget.unwrap_or(2000), cli.max_chars)
+        overview(
+            &cli.directory,
+            cli.token_budget.unwrap_or(2000),
+            cli.max_chars,
+        )
     } else if cli.uses_context {
         repo_map_with_detail(
             &cli.directory,
@@ -286,7 +297,11 @@ fn main() -> ExitCode {
                     .token_budget
                     .unwrap_or_else(|| cli.max_chars.div_ceil(4)),
             },
-            if cli.compact { Detail::Compact } else { Detail::Full },
+            if cli.compact {
+                Detail::Compact
+            } else {
+                Detail::Full
+            },
         )
     } else {
         repo_map(&cli.directory, cli.max_chars)

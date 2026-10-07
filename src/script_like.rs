@@ -23,8 +23,18 @@ const DECLARATIONS: &[(&str, &str)] = &[
 ];
 
 const MEMBER_MODIFIERS: &[&str] = &[
-    "public ", "private ", "protected ", "static ", "async ", "override ", "readonly ", "abstract ",
-    "declare ", "get ", "set ", "*",
+    "public ",
+    "private ",
+    "protected ",
+    "static ",
+    "async ",
+    "override ",
+    "readonly ",
+    "abstract ",
+    "declare ",
+    "get ",
+    "set ",
+    "*",
 ];
 
 struct Class {
@@ -44,7 +54,10 @@ pub(crate) fn parse(text: &str, component: bool) -> Definitions {
         let trimmed = line.trim();
         if component {
             if !in_script {
-                if trimmed.starts_with("<script") && !trimmed.contains("</script") && !trimmed.ends_with("/>") {
+                if trimmed.starts_with("<script")
+                    && !trimmed.contains("</script")
+                    && !trimmed.ends_with("/>")
+                {
                     (in_script, base, class) = (true, None, None);
                 }
                 continue;
@@ -80,7 +93,9 @@ pub(crate) fn parse(text: &str, component: bool) -> Definitions {
             if width > open.indent {
                 if width == *open.member_indent.get_or_insert(width) {
                     if let Some(method) = member_name(trimmed) {
-                        found.definitions.push(format!("method {}.{method}", open.name));
+                        found
+                            .definitions
+                            .push(format!("method {}.{method}", open.name));
                         found.symbols.push(method.to_owned());
                     }
                 }
@@ -100,11 +115,15 @@ pub(crate) fn parse(text: &str, component: bool) -> Definitions {
                 continue;
             };
             let name = identifier(rest.trim_start());
-            if !name.is_empty() && !(*kind == "class" && name == "extends") {
+            if !(name.is_empty() || *kind == "class" && name == "extends") {
                 found.definitions.push(format!("{kind} {name}"));
                 found.symbols.push(name.to_owned());
                 if *kind == "class" && !trimmed.ends_with('}') {
-                    class = Some(Class { name: name.to_owned(), indent: width, member_indent: None });
+                    class = Some(Class {
+                        name: name.to_owned(),
+                        indent: width,
+                        member_indent: None,
+                    });
                 }
             }
             break;
@@ -118,7 +137,10 @@ pub(crate) fn parse(text: &str, component: bool) -> Definitions {
 /// Fields (`handler = () => {}`), the constructor and decorators are not methods.
 fn member_name(line: &str) -> Option<&str> {
     let mut rest = line;
-    while let Some(next) = MEMBER_MODIFIERS.iter().find_map(|modifier| rest.strip_prefix(modifier)) {
+    while let Some(next) = MEMBER_MODIFIERS
+        .iter()
+        .find_map(|modifier| rest.strip_prefix(modifier))
+    {
         rest = next.trim_start();
     }
     let rest = rest.strip_prefix('#').unwrap_or(rest);
@@ -136,7 +158,9 @@ fn member_name(line: &str) -> Option<&str> {
 
 fn identifier(text: &str) -> &str {
     let end = text
-        .find(|character: char| !(character.is_alphanumeric() || character == '_' || character == '$'))
+        .find(|character: char| {
+            !(character.is_alphanumeric() || character == '_' || character == '$')
+        })
         .unwrap_or(text.len());
     &text[..end]
 }
@@ -220,7 +244,10 @@ function notCode() {}
 </script>
 ";
         let found = parse(source, true);
-        assert_eq!(found.definitions, ["const total", "function select", "const prerender"]);
+        assert_eq!(
+            found.definitions,
+            ["const total", "function select", "const prerender"]
+        );
         assert_eq!(found.imports, ["./Row.svelte"]);
     }
 }

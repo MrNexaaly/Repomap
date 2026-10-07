@@ -45,7 +45,10 @@ pub(crate) fn is_source(path: &Path) -> bool {
 }
 
 fn keep_directory(path: &Path) -> bool {
-    let name = path.file_name().and_then(|value| value.to_str()).unwrap_or("");
+    let name = path
+        .file_name()
+        .and_then(|value| value.to_str())
+        .unwrap_or("");
     !DEPENDENCY_DIRECTORIES.contains(&name)
         && !GENERATED_MARKERS
             .iter()
@@ -151,7 +154,12 @@ mod tests {
     fn listed(root: &Path) -> Vec<String> {
         source_files(root)
             .iter()
-            .map(|path| path.strip_prefix(root).unwrap().to_string_lossy().replace('\\', "/"))
+            .map(|path| {
+                path.strip_prefix(root)
+                    .unwrap()
+                    .to_string_lossy()
+                    .replace('\\', "/")
+            })
             .collect()
     }
 
@@ -174,7 +182,12 @@ mod tests {
         }
         assert_eq!(
             listed(root),
-            ["build/tool.rs", "fixtures/small.rs", "site/src/app.ts", "src/main.rs"]
+            [
+                "build/tool.rs",
+                "fixtures/small.rs",
+                "site/src/app.ts",
+                "src/main.rs"
+            ]
         );
     }
 
@@ -194,7 +207,11 @@ mod tests {
         ] {
             write(root, file);
         }
-        fs::write(root.join("target/CACHEDIR.TAG"), "Signature: 8a477f597d28d172789f06886806bc55").unwrap();
+        fs::write(
+            root.join("target/CACHEDIR.TAG"),
+            "Signature: 8a477f597d28d172789f06886806bc55",
+        )
+        .unwrap();
         fs::write(root.join("cmake-out/CMakeCache.txt"), "").unwrap();
         fs::write(root.join("env/pyvenv.cfg"), "home = /usr/bin").unwrap();
         assert_eq!(listed(root), ["src/lib.rs"]);
